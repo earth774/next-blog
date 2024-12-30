@@ -4,7 +4,7 @@ import { Github } from 'lucide-react'
 import NavLinkBlog from "@/app/components/NavLinkBlog";
 import { usePathname } from "next/navigation";
 
-const NavMenu = (props: any) => {
+const NavMenu = () => {
   const pathname = usePathname();
   return (
     <nav className="flex flex-col sm:flex-row justify-center sm:justify-between items-center sm:items-start gap-4">

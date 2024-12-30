@@ -28,7 +28,7 @@ export function getProjectBySlug(slug: string): Project {
     const fileContents = fs.readFileSync(fullPath, 'utf8')
 
     // Use gray-matter to parse the post metadata section
-    const { data, content } = matter(fileContents)
+    const { data } = matter(fileContents)
 
     return {
         slug,

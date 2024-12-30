@@ -1,4 +1,4 @@
-const WavyUnderline = (props: any) => {
+const WavyUnderline = () => {
     return (
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 30" className="w-full">
             <path

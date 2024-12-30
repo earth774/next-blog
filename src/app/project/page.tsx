@@ -2,7 +2,7 @@ import Footer from '@/app/components/Footer'
 import Header from '@/app/components/Header'
 import Link from 'next/link'
 import MainLayout from '../components/MainLayout'
-import { getAllProjects } from '@/lib/projects'
+import { getAllProjects, Project } from '@/lib/projects'
 // Add metadata for each blog post
 export async function generateMetadata() {
   return {
@@ -11,15 +11,14 @@ export async function generateMetadata() {
   }
 }
 
-
 export default function Blog() {
-  const projects = getAllProjects()
+  const projects: Project[] = getAllProjects()
   return (
     <div>
       <Header />
       <MainLayout>
         <ul >
-          {projects.map((project: any) => (
+          {projects.map((project: Project) => (
             <li key={project.slug} className='my-4'>
               <Link
                 target='_blank'

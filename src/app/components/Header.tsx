@@ -2,7 +2,11 @@ import Image from 'next/image'
 import NavMenu from "@/app/components/NavMenu"
 import WavyUnderline from "@/app/components/icons/WavyUnderline"
 
-const Header = (props: any) => {
+interface HeaderProps {
+    className?: string;
+}
+
+const Header = (props: HeaderProps) => {
     return (
         <header className={`flex flex-col gap-4 px-8 animate-fade-in relative ${props.className}`}>
             {/* Profile Section */}

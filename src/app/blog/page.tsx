@@ -20,7 +20,7 @@ export default function BlogIndex() {
             <Header />
             <MainLayout>
                 <ul >
-                    {posts.map((post: any) => (
+                    {posts.map((post) => (
                         <li key={post.slug}>
                             <Link
                                 href={`/blog/${post.slug}`}
