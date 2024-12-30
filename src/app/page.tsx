@@ -1,4 +1,7 @@
-import Header from '@/app/components/Header'
+import dynamic from 'next/dynamic';
+
+const Header = dynamic(() => import('@/app/components/Header'));
+
 // Add metadata for each blog post
 export async function generateMetadata() {
   return {

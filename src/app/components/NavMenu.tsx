@@ -1,8 +1,10 @@
 'use client'
 import Link from 'next/link'
 import { Github } from 'lucide-react'
-import NavLinkBlog from "@/app/components/NavLinkBlog";
 import { usePathname } from "next/navigation";
+import dynamic from 'next/dynamic';
+
+const NavLinkBlog = dynamic(() => import('@/app/components/NavLinkBlog'), { ssr: false });
 
 const NavMenu = () => {
   const pathname = usePathname();

@@ -1,8 +1,10 @@
 import { getAllPosts, getPostBySlug } from '@/lib/posts'
 import Markdown from 'markdown-to-jsx'
-import NavMenu from '@/app/components/NavMenu'
 import styles from './page.module.css'
-import Footer from '@/app/components/Footer'
+import dynamic from 'next/dynamic';
+
+const NavMenu = dynamic(() => import('@/app/components/NavMenu'));
+const Footer = dynamic(() => import('@/app/components/Footer'));
 
 interface Post {
     title: string;

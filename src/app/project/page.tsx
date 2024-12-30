@@ -1,8 +1,12 @@
-import Footer from '@/app/components/Footer'
-import Header from '@/app/components/Header'
 import Link from 'next/link'
-import MainLayout from '../components/MainLayout'
 import { getAllProjects, Project } from '@/lib/projects'
+import dynamic from 'next/dynamic';
+
+const Header = dynamic(() => import('@/app/components/Header'));
+const Footer = dynamic(() => import('@/app/components/Footer'));
+const MainLayout = dynamic(() => import('@/app/components/MainLayout'));
+
+
 // Add metadata for each blog post
 export async function generateMetadata() {
   return {

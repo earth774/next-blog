@@ -1,10 +1,11 @@
-import Footer from '@/app/components/Footer'
-import Header from '@/app/components/Header'
 import { getAboutBySlug } from '@/lib/about';
 import Markdown from 'markdown-to-jsx';
 import styles from './page.module.css'
-import MainLayout from '@/app/components/MainLayout';
+import dynamic from 'next/dynamic';
 
+const MainLayout = dynamic(() => import('@/app/components/MainLayout'));
+const Header = dynamic(() => import('@/app/components/Header'));
+const Footer = dynamic(() => import('@/app/components/Footer'));
 // Add metadata for each blog post
 export async function generateMetadata() {
     const about = await getAboutBySlug('about')

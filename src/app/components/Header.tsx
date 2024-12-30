@@ -1,6 +1,8 @@
 import Image from 'next/image'
-import NavMenu from "@/app/components/NavMenu"
-import WavyUnderline from "@/app/components/icons/WavyUnderline"
+import dynamic from 'next/dynamic';
+
+const NavMenu = dynamic(() => import('@/app/components/NavMenu'), { ssr: true });
+const WavyUnderline = dynamic(() => import('@/app/components/icons/WavyUnderline'), { ssr: true });
 
 interface HeaderProps {
     className?: string;
