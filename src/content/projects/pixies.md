@@ -1,5 +1,5 @@
 ---
 link: "https://pixies.amiearth.com/"
-description: "Create and share beautiful code images or code snippets. Start typing to begin."
+description: "A simple tool to create and share beautiful code images."
 date: "2025-01-05"
 ---
