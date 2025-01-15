@@ -17,6 +17,14 @@ const NavMenu = () => {
         <li><NavLinkBlog href="/blog" text="Blog" className={`${pathname === '/blog' ? 'bg-[#FFD700]' : ''}`} /></li>
         <li><NavLinkBlog href="/project" text="Project" className={`${pathname === '/project' ? 'bg-[#FFD700]' : ''}`} /></li>
         <li><NavLinkBlog href="/about" text="About" className={`${pathname === '/about' ? 'bg-[#FFD700]' : ''}`} /></li>
+        <li><a href="https://webring.wonderful.software#amiearth.com" title="วงแหวนเว็บ">
+          <img
+            alt="วงแหวนเว็บ"
+            width="32"
+            height="32"
+            src="https://webring.wonderful.software/webring.black.svg"
+          />
+        </a></li>
       </ul>
 
       <div className="flex gap-4 ">

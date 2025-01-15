@@ -21,7 +21,7 @@ const Header = (props: HeaderProps) => {
                     className="rounded-full"
                 />
                 <div className="flex flex-col justify-center gap-2">
-                    <h1 className="text-md sm:text-xl font-semibold">Sutthiphong Nuanma</h1>
+                    <h1 className="text-md sm:text-xl font-semibold">Sutthiphong Nuanma </h1>
                     <p className="text-sm sm:text-lg text-gray-700">Software Developer</p>
                 </div>
             </div>
