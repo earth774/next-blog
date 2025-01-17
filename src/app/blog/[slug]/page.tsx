@@ -20,6 +20,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         return {
             title: 'Post not found',
             description: 'The requested post was not found.',
+            alternates: {
+                types: {
+                    "application/rss+xml": "https://amiearth.com/feed.xml",
+                },
+            },
         }
     }
     return {

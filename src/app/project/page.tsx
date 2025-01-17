@@ -12,6 +12,11 @@ export async function generateMetadata() {
   return {
     title: `Projects | Amiearth`,
     description: `Projects page of amiearth`,
+    alternates: {
+      types: {
+        "application/rss+xml": "https://amiearth.com/feed.xml",
+      },
+    },
   }
 }
 

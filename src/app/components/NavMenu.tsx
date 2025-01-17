@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Github } from 'lucide-react'
 import { usePathname } from "next/navigation";
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 const NavLinkBlog = dynamic(() => import('@/app/components/NavLinkBlog'), { ssr: false });
 
@@ -18,7 +19,7 @@ const NavMenu = () => {
         <li><NavLinkBlog href="/project" text="Project" className={`${pathname === '/project' ? 'bg-[#FFD700]' : ''}`} /></li>
         <li><NavLinkBlog href="/about" text="About" className={`${pathname === '/about' ? 'bg-[#FFD700]' : ''}`} /></li>
         <li><a href="https://webring.wonderful.software#amiearth.com" title="วงแหวนเว็บ">
-          <img
+          <Image
             alt="วงแหวนเว็บ"
             width="32"
             height="32"

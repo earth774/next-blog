@@ -7,7 +7,12 @@ export async function generateMetadata() {
   return {
     title: `Home | Amiearth`,
     description: `Home page of amiearth`,
-  }
+    alternates: {
+      types: {
+        "application/rss+xml": "https://amiearth.com/feed.xml",
+      },
+    },
+  };
 }
 
 export default function Home() {

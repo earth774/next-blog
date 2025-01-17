@@ -1,16 +1,5 @@
 import { getAllPosts } from "@/lib/posts";
 import RSS from "rss";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Amiearth Blog",
-  description: "Amiearth Blog",
-  alternates: {
-    types: {
-      "application/rss+xml": "https://amiearth.com/feed.xml",
-    },
-  },
-};
 
 export async function GET() {
   const feed = new RSS({
