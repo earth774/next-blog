@@ -17,8 +17,8 @@ export async function GET() {
   posts.map((post) => {
     feed.item({
       title: post.title,
-      guid: `https://amiearth.com/${post.slug}`,
-      url: `https://amiearth.com/${post.slug}`,
+      guid: `https://amiearth.com/blog/${post.slug}`,
+      url: `https://amiearth.com/blog/${post.slug}`,
       date: post.date,
       description: post.content.slice(0, 1000),
       author: "Sutthipong Nuanma",
