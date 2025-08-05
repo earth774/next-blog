@@ -1,5 +1,6 @@
 ---
 link: "https://careerdiag.com/"
-description: "A platform for career assessments, insights, and personalized growth plans."
+description: "Career assessment platform with personalized growth insights"
 date: "2022-05-29"
+status: "active"
 ---

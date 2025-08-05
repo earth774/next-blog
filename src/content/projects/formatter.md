@@ -1,5 +1,6 @@
 ---
 link: "https://formatter.amiearth.com/"
-description: "A simple tool to format and validate data online."
+description: "Online data formatting & validation tool"
 date: "2024-12-26"
+status: "active"
 ---

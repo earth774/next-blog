@@ -1,5 +1,6 @@
 ---
 link: "https://imsrt.infinitymb.com/"
-description: "A debt management system with real-time monitoring and daily notification features."
+description: "Debt management system with real-time monitoring"
 date: "2025-03-22"
+status: "active"
 ---
