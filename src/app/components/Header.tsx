@@ -1,44 +1,56 @@
-import Image from 'next/image'
-import dynamic from 'next/dynamic';
+import Image from "next/image";
+import dynamic from "next/dynamic";
 
-const NavMenu = dynamic(() => import('@/app/components/NavMenu'), { ssr: true });
-const WavyUnderline = dynamic(() => import('@/app/components/icons/WavyUnderline'), { ssr: true });
+const NavMenu = dynamic(() => import("@/app/components/NavMenu"), {
+  ssr: true,
+});
+const WavyUnderline = dynamic(
+  () => import("@/app/components/icons/WavyUnderline"),
+  { ssr: true }
+);
 
 interface HeaderProps {
-    className?: string;
+  className?: string;
 }
 
 const Header = (props: HeaderProps) => {
-    return (
-        <header className={`flex flex-col gap-4 px-8 animate-fade-in relative ${props.className}`}>
-            {/* Profile Section */}
-            <div className="flex flex-row gap-2">
-                <Image
-                    src="/profile.jpg"
-                    alt="Profile picture"
-                    width={96}
-                    height={96}
-                    className="rounded-full"
-                />
-                <div className="flex flex-col justify-center gap-2">
-                    <h1 className="text-md sm:text-xl font-semibold">Sutthiphong Nuanma </h1>
-                    <p className="text-sm sm:text-lg text-gray-700">Software Developer</p>
-                </div>
-            </div>
+  return (
+    <header
+      className={`flex flex-col gap-4 px-8 animate-fade-in relative contain-layout ${props.className}`}
+    >
+      {/* Profile Section */}
+      <div className="flex flex-row gap-2">
+        <Image
+          src="/profile.jpg"
+          alt="Profile picture"
+          width={96}
+          height={96}
+          className="rounded-full"
+          priority
+          sizes="96px"
+        />
+        <div className="flex flex-col justify-center gap-2">
+          <h1 className="text-md sm:text-xl font-semibold">
+            Sutthiphong Nuanma{" "}
+          </h1>
+          <p className="text-sm sm:text-lg text-gray-700">Software Developer</p>
+        </div>
+      </div>
 
-            {/* Navigation Links */}
-            <div className="">
-                <NavMenu />
-            </div>
+      {/* Navigation Links */}
+      <div className="">
+        <NavMenu />
+      </div>
 
-            {/* Introduction */}
-            <p className="text-sm sm:text-lg">
-                Hi 👋 My name is earth 🌎 I&apos;m Developer live in Chiang Rai, Thailand 🇹🇭
-            </p>
+      {/* Introduction */}
+      <p className="text-sm sm:text-lg">
+        Hi 👋 My name is earth 🌎 I&apos;m Developer live in Chiang Rai,
+        Thailand 🇹🇭
+      </p>
 
-            <WavyUnderline />
-        </header>
-    )
-}
+      <WavyUnderline />
+    </header>
+  );
+};
 
-export default Header
+export default Header;

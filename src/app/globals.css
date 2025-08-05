@@ -9,6 +9,30 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
   }
+
+  /* Prevent layout shifts */
+  .contain-layout {
+    contain: layout style;
+  }
+
+  .contain-size {
+    contain: size layout;
+  }
+
+  /* AdSense container to prevent layout shifts */
+  .adsense-container {
+    min-height: 250px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    contain: layout style;
+  }
+
+  /* Image container to prevent layout shifts */
+  .image-container {
+    contain: layout;
+    aspect-ratio: attr(width) / attr(height);
+  }
 }
 
 :root {
@@ -26,18 +50,21 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-display: swap;
+  /* Prevent layout shift during font loading */
+  font-size-adjust: 0.5;
 }
 
 @keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translate3d(0, 10px, 0);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -65,6 +92,8 @@ body {
 
 .animate-fade-in {
   animation: fade-in 0.6s ease-out;
+  will-change: opacity, transform;
+  transform: translateZ(0); /* Force hardware acceleration */
 }
 
 .animate-status-pulse {

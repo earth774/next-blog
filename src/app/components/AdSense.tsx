@@ -35,14 +35,20 @@ const AdSense: React.FC<AdSenseProps> = ({
   }, []);
 
   return (
-    <ins
-      className={className}
-      style={style}
-      data-ad-client="ca-pub-6751234358755697"
-      data-ad-slot={adSlot}
-      data-ad-format={adFormat}
-      data-full-width-responsive={fullWidthResponsive.toString()}
-    />
+    <div className="adsense-container">
+      <ins
+        className={className}
+        style={{
+          ...style,
+          minHeight: "250px",
+          width: "100%",
+        }}
+        data-ad-client="ca-pub-6751234358755697"
+        data-ad-slot={adSlot}
+        data-ad-format={adFormat}
+        data-full-width-responsive={fullWidthResponsive.toString()}
+      />
+    </div>
   );
 };
 
