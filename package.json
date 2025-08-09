@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@next/third-parties": "^15.4.6",
     "@vercel/speed-insights": "^1.1.0",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.469.0",
