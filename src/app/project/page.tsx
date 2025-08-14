@@ -9,8 +9,33 @@ const MainLayout = dynamic(() => import("@/app/components/MainLayout"));
 export async function generateMetadata() {
   return {
     title: "Projects | Amiearth",
-    description: "A collection of my projects and experiments",
+    description:
+      "Explore my portfolio of software projects, web applications, and experiments. From web development to mobile apps, discover the technologies and solutions I've built.",
+    keywords: [
+      "projects",
+      "portfolio",
+      "web development",
+      "software",
+      "applications",
+      "experiments",
+      "coding projects",
+    ],
+    openGraph: {
+      title: "Projects | Amiearth",
+      description:
+        "Explore my portfolio of software projects, web applications, and experiments.",
+      url: "https://amiearth.com/project",
+      siteName: "Amiearth Blog",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Projects | Amiearth",
+      description:
+        "Explore my portfolio of software projects, web applications, and experiments.",
+    },
     alternates: {
+      canonical: "/project",
       types: {
         "application/rss+xml": "https://amiearth.com/feed.xml",
       },
@@ -113,9 +138,10 @@ export default function ProjectsPage() {
                       <span className="text-xl">
                         {getProjectIcon(project.link, project.slug)}
                       </span>
-                      {project.link
-                        .replace(/https?:\/\//, "")
-                        .replace(/\/$/, "")}
+                      {project.title ||
+                        project.link
+                          .replace(/https?:\/\//, "")
+                          .replace(/\/$/, "")}
                     </h3>
                     <svg
                       className="w-5 h-5 text-gray-400 group-hover:text-[#51a800] transition-colors flex-shrink-0 ml-2"
@@ -170,6 +196,35 @@ export default function ProjectsPage() {
         </div>
       </MainLayout>
       <Footer />
+
+      {/* Structured Data for Projects */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            name: "Amiearth Projects",
+            description: "Portfolio of software projects and experiments",
+            url: "https://amiearth.com/project",
+            itemListElement: projects.map((project, index) => ({
+              "@type": "SoftwareApplication",
+              position: index + 1,
+              name: project.title || project.slug,
+              description: project.description,
+              url: project.link,
+              datePublished: project.date,
+              applicationCategory: "WebApplication",
+              operatingSystem: "Web Browser",
+              author: {
+                "@type": "Person",
+                name: "Sutthiphong Nuanma",
+                alternateName: "Amiearth",
+              },
+            })),
+          }),
+        }}
+      />
     </div>
   );
 }

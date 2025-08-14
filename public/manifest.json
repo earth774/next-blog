@@ -1,0 +1,29 @@
+{
+  "name": "Amiearth Blog - Software Developer & Tech Enthusiast",
+  "short_name": "Amiearth",
+  "description": "Personal blog of Sutthiphong Nuanma, a Software Developer from Chiang Rai, Thailand",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/profile.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/profile.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["technology", "education", "business"],
+  "lang": "en",
+  "dir": "ltr",
+  "author": "Sutthiphong Nuanma",
+  "homepage_url": "https://amiearth.com"
+}

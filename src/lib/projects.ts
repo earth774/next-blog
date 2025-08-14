@@ -6,6 +6,7 @@ const postsDirectory = path.join(process.cwd(), "/src/content/projects");
 
 export interface Project {
   slug: string;
+  title: string;
   link: string;
   description: string;
   date: string;
@@ -43,6 +44,9 @@ export function getProjectBySlug(slug: string): Project {
 
   return {
     slug,
+    title:
+      data.title ||
+      slug.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase()), // Generate title from slug if not provided
     date: data.date,
     link: data.link,
     description: data.description,
