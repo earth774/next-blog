@@ -3,7 +3,7 @@ title: "About"
 updated: "2024-12-29"
 ---
 
-## About
+# About
 
 Hi 👋, I'm Earth, a passionate developer based in Chiang Rai, Thailand. I specialize in creating efficient, modern web applications and enjoy turning ideas into reality with clean code and innovative solutions.
 
@@ -18,4 +18,3 @@ Hi 👋, I'm Earth, a passionate developer based in Chiang Rai, Thailand. I spec
 - Exploring the beautiful landscapes of Chiang Rai 🌿.
 - Experimenting with new technologies and frameworks.
 - Sharing insights through my blog posts.
-

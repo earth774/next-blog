@@ -13,6 +13,28 @@ interface Post {
   excerpt?: string;
 }
 
+// Function to find the first image file in a post directory
+function findPostImage(slug: string): string | null {
+  const imageDir = path.join(process.cwd(), "public/images/posts", slug);
+
+  try {
+    if (fs.existsSync(imageDir)) {
+      const files = fs.readdirSync(imageDir);
+      const imageFiles = files.filter((file) =>
+        /\.(jpg|jpeg|png|webp|avif|gif)$/i.test(file)
+      );
+
+      if (imageFiles.length > 0) {
+        return `/images/posts/${slug}/${imageFiles[0]}`;
+      }
+    }
+  } catch (error) {
+    console.warn(`Could not read image directory for ${slug}:`, error);
+  }
+
+  return null;
+}
+
 // Function to get a post by slug
 export function getPostBySlug(slug: string): Post | null {
   const fullPath = path.join(postsDirectory, `${slug}/${slug}.md`);
@@ -25,12 +47,15 @@ export function getPostBySlug(slug: string): Post | null {
     const excerpt =
       data.excerpt || content.slice(0, 150).replace(/[#*`]/g, "") + "...";
 
+    // Find the actual image file in the post directory
+    const image = data.image || findPostImage(slug);
+
     return {
       slug,
       date: data.date,
       title: data.title,
       content,
-      image: data.image || `/images/posts/${slug}/1.webp`, // Default image path
+      image,
       excerpt,
     };
   } catch (error) {

@@ -3,6 +3,7 @@ import Markdown from "markdown-to-jsx";
 import styles from "./page.module.css";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import Image from "next/image";
 
 const NavMenu = dynamic(() => import("@/app/components/NavMenu"));
 const Footer = dynamic(() => import("@/app/components/Footer"));
@@ -128,14 +129,25 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
                 })}
               </em>
             </time>
-            <span>•</span>
-            <span>By Sutthiphong Nuanma</span>
+            <span className={styles.date}>•</span>
+            <span className={styles.date}>By Sutthiphong Nuanma</span>
           </div>
-          {post.excerpt && (
+          {/* {post.excerpt && (
             <p className="text-lg text-gray-700 leading-relaxed border-l-4 border-blue-500 pl-4 mb-6">
               {post.excerpt}
             </p>
           )}
+          {post.image && (
+            <div className="relative w-full h-64 mb-6 rounded-lg overflow-hidden">
+              <Image
+                src={post.image}
+                alt={post.title}
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          )} */}
         </header>
 
         {/* Post Content */}

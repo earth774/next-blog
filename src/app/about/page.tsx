@@ -53,14 +53,6 @@ export default async function About() {
       <Header />
       <MainLayout>
         {/* About Header */}
-        <div className="text-center py-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">About Me</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Get to know more about my journey, skills, and passion for
-            technology
-          </p>
-        </div>
-
         <div className={styles.content}>
           <Markdown>{about.content}</Markdown>
         </div>
