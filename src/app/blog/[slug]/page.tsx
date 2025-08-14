@@ -3,7 +3,6 @@ import Markdown from "markdown-to-jsx";
 import styles from "./page.module.css";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import Image from "next/image";
 
 const NavMenu = dynamic(() => import("@/app/components/NavMenu"));
 const Footer = dynamic(() => import("@/app/components/Footer"));
