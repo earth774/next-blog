@@ -45,6 +45,9 @@ export async function generateMetadata() {
   };
 }
 
+// Add caching configuration for better performance
+export const revalidate = 86400; // Revalidate every 24 hours (about page changes less frequently)
+
 export default async function About() {
   const about = await getAboutBySlug("about");
 

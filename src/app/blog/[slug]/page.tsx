@@ -89,6 +89,9 @@ export async function generateStaticParams() {
   }));
 }
 
+// Add caching configuration for better performance
+export const revalidate = 3600; // Revalidate every hour
+
 const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
   const post: Post | null = await getPostBySlug(slug);

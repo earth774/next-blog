@@ -43,6 +43,9 @@ export async function generateMetadata() {
   };
 }
 
+// Add caching configuration for better performance
+export const revalidate = 3600; // Revalidate every hour
+
 export default function BlogIndex() {
   const posts = getAllPosts();
 

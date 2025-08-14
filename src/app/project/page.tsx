@@ -43,6 +43,9 @@ export async function generateMetadata() {
   };
 }
 
+// Add caching configuration for better performance
+export const revalidate = 86400; // Revalidate every 24 hours (projects change less frequently)
+
 // Function to get appropriate icon/emoji for each project
 const getProjectIcon = (link: string, slug: string): string => {
   const url = link.toLowerCase();

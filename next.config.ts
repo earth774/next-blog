@@ -81,6 +81,7 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // Static assets with long-term caching
       {
         source:
           "/(.*)\\.(js|css|woff|woff2|ttf|otf|eot|ico|png|jpg|jpeg|gif|webp|svg)",
@@ -91,15 +92,39 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // HTML pages with shorter caching for dynamic content
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value:
+              "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      // Blog posts with medium-term caching
+      {
+        source: "/blog/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value:
+              "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      // XML and text files with daily caching
       {
         source: "/(.*)\\.(xml|txt)",
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=86400",
+            value: "public, max-age=86400, s-maxage=86400",
           },
         ],
       },
+      // RSS feed with hourly caching
       {
         source: "/feed.xml",
         headers: [
@@ -109,7 +134,18 @@ const nextConfig: NextConfig = {
           },
           {
             key: "Cache-Control",
-            value: "public, max-age=3600",
+            value:
+              "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      // Manifest and service worker with long-term caching
+      {
+        source: "/(manifest\\.json|sw\\.js)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },

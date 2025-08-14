@@ -51,6 +51,9 @@ export async function generateMetadata() {
   };
 }
 
+// Add caching configuration for better performance
+export const revalidate = 3600; // Revalidate every hour
+
 export default function Home() {
   const posts = getAllPosts().slice(0, 3); // Get latest 3 posts
   const projects = getAllProjects().slice(0, 2); // Get latest 2 projects
