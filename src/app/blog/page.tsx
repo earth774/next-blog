@@ -51,9 +51,13 @@ export default function BlogIndex() {
       <Header />
       <MainLayout>
         {/* Blog Header */}
-        <div className="text-center py-16">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Blog</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+
+        <div className="mb-8 mt-8">
+          <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
+            <span className="text-4xl">💻</span>
+            Blog
+          </h1>
+          <p className="text-gray-600">
             Sharing insights on web development, programming, and technology
             from my personal experience
           </p>
