@@ -46,26 +46,6 @@ export async function generateMetadata() {
 // Add caching configuration for better performance
 export const revalidate = 86400; // Revalidate every 24 hours (projects change less frequently)
 
-// Function to get appropriate icon/emoji for each project
-const getProjectIcon = (link: string, slug: string): string => {
-  const url = link.toLowerCase();
-
-  if (url.includes("chat") || slug.includes("chat")) return "💬";
-  if (url.includes("excalidraw") || slug.includes("excalidraw")) return "🎨";
-  if (url.includes("formatter") || slug.includes("formatter")) return "🔧";
-  if (url.includes("career") || slug.includes("career")) return "🎯";
-  if (
-    url.includes("infinitymb") &&
-    !url.includes("chat") &&
-    !url.includes("imsrt")
-  )
-    return "📱";
-  if (url.includes("imsrt") || slug.includes("debt")) return "💰";
-  if (url.includes("pixies") || slug.includes("pixies")) return "✨";
-
-  return "🚀"; // default icon
-};
-
 // Function to get status badge styling and text
 const getStatusBadge = (status: "active" | "closed" | "maintenance") => {
   switch (status) {
@@ -138,9 +118,7 @@ export default function ProjectsPage() {
                 <div className="p-6 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 bg-white/50 backdrop-blur-sm">
                   <div className="flex items-start justify-between mb-3">
                     <h3 className="font-semibold text-lg group-hover:text-[#51a800] transition-colors flex items-center gap-2">
-                      <span className="text-xl">
-                        {getProjectIcon(project.link, project.slug)}
-                      </span>
+                      <span className="text-xl">{project.icon}</span>
                       {project.title ||
                         project.link
                           .replace(/https?:\/\//, "")

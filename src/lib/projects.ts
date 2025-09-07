@@ -11,6 +11,7 @@ export interface Project {
   description: string;
   date: string;
   status: "active" | "closed" | "maintenance";
+  icon: string;
 }
 
 export function getAllProjects(): Project[] {
@@ -51,5 +52,6 @@ export function getProjectBySlug(slug: string): Project {
     link: data.link,
     description: data.description,
     status: data.status || "active", // default to active if not specified
+    icon: data.icon || "🚀", // default to rocket emoji if not specified
   };
 }
