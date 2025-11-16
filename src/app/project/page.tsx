@@ -95,80 +95,85 @@ export default function ProjectsPage() {
     <div>
       <Header />
       <MainLayout>
-        <div className="space-y-6 mt-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
-              <span className="text-4xl">🛠️</span>
-              Projects
-            </h1>
-            <p className="text-gray-600">
+        <div className="space-y-16 mt-12">
+          {/* Header Section - Minimal & Clean */}
+          <div className="max-w-2xl">
+            <h1 className="text-3xl font-bold mb-2">💪 Projects</h1>
+            <p className="text-gray-600 dark:text-gray-400">
               Things I&apos;ve built and experimented with
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
-            {projects.map((project: Project) => (
+          {/* Projects List - Clean & Spacious */}
+          <div className="space-y-1">
+            {projects.map((project: Project, index: number) => (
               <Link
                 key={project.slug}
                 href={project.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group block"
+                className="group block animate-fade-in"
+                style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <div className="p-6 rounded-xl border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200 bg-white/50 backdrop-blur-sm">
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="font-semibold text-lg group-hover:text-[#51a800] transition-colors flex items-center gap-2">
-                      <span className="text-xl">{project.icon}</span>
-                      {project.title ||
-                        project.link
-                          .replace(/https?:\/\//, "")
-                          .replace(/\/$/, "")}
-                    </h3>
-                    <svg
-                      className="w-5 h-5 text-gray-400 group-hover:text-[#51a800] transition-colors flex-shrink-0 ml-2"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                      />
-                    </svg>
-                  </div>
+                <div className="relative py-8 px-6 md:px-8 border-b border-gray-100 dark:border-gray-800/50 hover:bg-gray-50/50 dark:hover:bg-gray-900/30 transition-all duration-300">
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
+                    {/* Left: Icon + Title + Description */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start gap-4 mb-3">
+                        <span className="text-3xl flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
+                          {project.icon}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-xl md:text-2xl font-medium text-gray-900 dark:text-gray-100 mb-2 group-hover:text-[#51a800] dark:group-hover:text-[#6bc924] transition-colors duration-300">
+                            {project.title ||
+                              project.link
+                                .replace(/https?:\/\//, "")
+                                .replace(/\/$/, "")}
+                          </h3>
+                          <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base leading-relaxed">
+                            {project.description}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
 
-                  <div className="mb-4">
-                    <div
-                      className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-full text-xs font-bold tracking-wide ${
-                        getStatusBadge(project.status).className
-                      }`}
-                    >
+                    {/* Right: Status + Date + Arrow */}
+                    <div className="flex items-center gap-6 md:gap-8 flex-shrink-0">
+                      {/* Status Badge - Minimal */}
                       <div className="flex items-center gap-2">
                         <div
-                          className={`w-2.5 h-2.5 rounded-full shadow-lg ${
+                          className={`w-2 h-2 rounded-full ${
                             getStatusBadge(project.status).dotColor
                           } ${getStatusBadge(project.status).pulseClass}`}
                         ></div>
-                        <span className="text-base leading-none">
-                          {getStatusBadge(project.status).emoji}
+                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                          {getStatusBadge(project.status).text}
                         </span>
                       </div>
-                      <span className="uppercase tracking-wider">
-                        {getStatusBadge(project.status).text}
-                      </span>
-                    </div>
-                  </div>
 
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {project.description}
-                  </p>
-                  <div className="mt-4 text-xs text-gray-400">
-                    {new Date(project.date).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "short",
-                    })}
+                      {/* Date - Minimal */}
+                      <span className="text-sm text-gray-400 dark:text-gray-500 font-light hidden md:block">
+                        {new Date(project.date).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                        })}
+                      </span>
+
+                      {/* Arrow Icon */}
+                      <svg
+                        className="w-5 h-5 text-gray-300 dark:text-gray-600 group-hover:text-[#51a800] dark:group-hover:text-[#6bc924] group-hover:translate-x-1 transition-all duration-300"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M17 8l4 4m0 0l-4 4m4-4H3"
+                        />
+                      </svg>
+                    </div>
                   </div>
                 </div>
               </Link>
