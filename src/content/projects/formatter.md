@@ -4,4 +4,5 @@ description: "Online data formatting & validation tool"
 date: "2024-12-26"
 status: "active"
 icon: "🔧"
+category: "project"
 ---

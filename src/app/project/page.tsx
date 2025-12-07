@@ -46,6 +46,12 @@ export async function generateMetadata() {
 // Add caching configuration for better performance
 export const revalidate = 86400; // Revalidate every 24 hours (projects change less frequently)
 
+const TABS: { key: Project["category"]; label: string }[] = [
+  { key: "project", label: "Project" },
+  { key: "npm", label: "NPM" },
+  { key: "wordpress", label: "WordPress" },
+];
+
 // Function to get status badge styling and text
 const getStatusBadge = (status: "active" | "closed" | "maintenance") => {
   switch (status) {
@@ -88,8 +94,20 @@ const getStatusBadge = (status: "active" | "closed" | "maintenance") => {
   }
 };
 
-export default function ProjectsPage() {
+export default async function ProjectsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: Project["category"] }>;
+}) {
+  const resolvedSearchParams = await searchParams;
   const projects: Project[] = getAllProjects();
+  const tabParam = resolvedSearchParams?.tab ?? "project";
+  const activeTab = TABS.some((tab) => tab.key === tabParam)
+    ? (tabParam as Project["category"])
+    : "project";
+  const filteredProjects = projects.filter(
+    (project) => project.category === activeTab,
+  );
 
   return (
     <div>
@@ -104,80 +122,105 @@ export default function ProjectsPage() {
             </p>
           </div>
 
+          {/* Tabs */}
+          <div className="flex flex-wrap items-center gap-2">
+            {TABS.map((tab) => {
+              const isActive = tab.key === activeTab;
+              const href =
+                tab.key === "project" ? "/project" : `/project?tab=${tab.key}`;
+
+              return (
+                <Link
+                  key={tab.key}
+                  href={href}
+                  className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+                    isActive
+                      ? "border-gray-900 bg-gray-900 text-white dark:border-white dark:bg-white dark:text-gray-900"
+                      : "border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800/80 dark:text-gray-300 dark:hover:bg-gray-700"
+                  }`}
+                  aria-selected={isActive}
+                >
+                  {tab.label}
+                </Link>
+              );
+            })}
+          </div>
+
           {/* Projects List - Clean & Spacious */}
           <div className="space-y-1">
-            {projects.map((project: Project, index: number) => (
-              <Link
-                key={project.slug}
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group block animate-fade-in"
-                style={{ animationDelay: `${index * 0.05}s` }}
-              >
-                <div className="relative py-8 px-6 md:px-8 border-b border-gray-100 dark:border-gray-800/50 hover:bg-gray-50/50 dark:hover:bg-gray-900/30 transition-all duration-300">
-                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
-                    {/* Left: Icon + Title + Description */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start gap-4 mb-3">
-                        <span className="text-3xl flex-shrink-0 group-hover:scale-110 transition-transform duration-300">
-                          {project.icon}
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-xl md:text-2xl font-medium text-gray-900 dark:text-gray-100 mb-2 group-hover:text-[#51a800] dark:group-hover:text-[#6bc924] transition-colors duration-300">
-                            {project.title ||
-                              project.link
-                                .replace(/https?:\/\//, "")
-                                .replace(/\/$/, "")}
-                          </h3>
-                          <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base leading-relaxed">
-                            {project.description}
-                          </p>
+            {filteredProjects.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-gray-200 bg-white/40 p-8 text-center text-gray-500 shadow-sm dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-400">
+                No {activeTab} items yet.
+              </div>
+            ) : (
+              filteredProjects.map((project: Project, index: number) => (
+                <Link
+                  key={project.slug}
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block animate-fade-in"
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                >
+                  <div className="relative border-b border-gray-100 py-8 px-6 transition-all duration-300 hover:bg-gray-50/50 dark:border-gray-800/50 dark:hover:bg-gray-900/30 md:px-8">
+                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
+                      {/* Left: Title + Description (icon removed) */}
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-3 flex items-start">
+                          <div className="min-w-0 flex-1">
+                            <h3 className="text-xl font-medium text-gray-900 transition-colors duration-300 group-hover:text-[#51a800] dark:text-gray-100 dark:group-hover:text-[#6bc924] md:text-2xl">
+                              {project.title ||
+                                project.link
+                                  .replace(/https?:\/\//, "")
+                                  .replace(/\/$/, "")}
+                            </h3>
+                            <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400 md:text-base">
+                              {project.description}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    {/* Right: Status + Date + Arrow */}
-                    <div className="flex items-center gap-6 md:gap-8 flex-shrink-0">
-                      {/* Status Badge - Minimal */}
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-2 h-2 rounded-full ${
-                            getStatusBadge(project.status).dotColor
-                          } ${getStatusBadge(project.status).pulseClass}`}
-                        ></div>
-                        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                          {getStatusBadge(project.status).text}
+                      {/* Right: Status + Date + Arrow */}
+                      <div className="flex flex-shrink-0 items-center gap-6 md:gap-8">
+                        {/* Status Badge - Minimal */}
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`h-2 w-2 rounded-full ${getStatusBadge(project.status).dotColor} ${getStatusBadge(project.status).pulseClass}`}
+                          ></div>
+                          <span className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                            {getStatusBadge(project.status).text}
+                          </span>
+                        </div>
+
+                        {/* Date - Minimal */}
+                        <span className="hidden text-sm font-light text-gray-400 dark:text-gray-500 md:block">
+                          {new Date(project.date).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                          })}
                         </span>
+
+                        {/* Arrow Icon */}
+                        <svg
+                          className="h-5 w-5 text-gray-300 transition-all duration-300 group-hover:translate-x-1 group-hover:text-[#51a800] dark:text-gray-600 dark:group-hover:text-[#6bc924]"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={1.5}
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"
+                          />
+                        </svg>
                       </div>
-
-                      {/* Date - Minimal */}
-                      <span className="text-sm text-gray-400 dark:text-gray-500 font-light hidden md:block">
-                        {new Date(project.date).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "short",
-                        })}
-                      </span>
-
-                      {/* Arrow Icon */}
-                      <svg
-                        className="w-5 h-5 text-gray-300 dark:text-gray-600 group-hover:text-[#51a800] dark:group-hover:text-[#6bc924] group-hover:translate-x-1 transition-all duration-300"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={1.5}
-                          d="M17 8l4 4m0 0l-4 4m4-4H3"
-                        />
-                      </svg>
                     </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))
+            )}
           </div>
         </div>
       </MainLayout>
