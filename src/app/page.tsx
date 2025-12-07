@@ -1,11 +1,6 @@
 import dynamic from "next/dynamic";
-import { getAllPosts } from "@/lib/posts";
-import { getAllProjects } from "@/lib/projects";
-import Image from "next/image";
-import Link from "next/link";
 
 const Header = dynamic(() => import("@/app/components/Header"));
-const MainLayout = dynamic(() => import("@/app/components/MainLayout"));
 const Footer = dynamic(() => import("@/app/components/Footer"));
 
 // Add metadata for each blog post
@@ -55,9 +50,6 @@ export async function generateMetadata() {
 export const revalidate = 3600; // Revalidate every hour
 
 export default function Home() {
-  const posts = getAllPosts().slice(0, 3); // Get latest 3 posts
-  const projects = getAllProjects().slice(0, 2); // Get latest 2 projects
-
   return (
     <>
       <Header className="min-h-screen justify-center" />
