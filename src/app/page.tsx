@@ -93,9 +93,9 @@ export default function Home() {
     <div
       className={`${literata.className} relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[var(--am-bg)] text-[var(--am-text-primary)]`}
     >
-      <div className="mx-auto flex min-h-screen w-full max-w-[1440px] flex-col">
+      <div className="flex min-h-screen w-full flex-col">
         <nav className="h-16 border-b border-[var(--am-border)]">
-          <div className="mx-auto flex h-full w-full max-w-[1440px] items-center justify-between px-4 md:px-12">
+          <div className="flex h-full w-full items-center justify-between px-4 md:px-12">
             <div className="flex items-center gap-2 text-[22px] leading-none text-[var(--am-text-primary)]">
               <Link href="/" className={`${playfairDisplay.className} italic`}>
                 Earth
@@ -220,7 +220,7 @@ export default function Home() {
         </main>
 
         <footer className="border-t border-[var(--am-border)]">
-          <div className="mx-auto hidden h-16 w-full max-w-[1440px] items-center justify-between px-12 md:flex">
+          <div className="hidden h-16 w-full items-center justify-between px-12 md:flex">
             <p className="text-[13px] text-[var(--am-text-muted)]">
               © 2026 Earth. Made with care in Chiang Rai.
             </p>

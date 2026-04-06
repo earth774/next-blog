@@ -167,7 +167,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} bg-white text-black antialiased max-w-3xl mx-4 mt-8 lg:mx-auto`}
+        className={`${geistSans.variable} ${geistMono.variable} mt-8 min-h-screen bg-white text-black antialiased`}
       >
         {children}
         <SpeedInsights />
