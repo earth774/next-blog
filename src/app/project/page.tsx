@@ -1,10 +1,32 @@
 import Link from "next/link";
+import { ExternalLink } from "lucide-react";
+import { Literata, Playfair_Display } from "next/font/google";
+import BlogNav from "@/app/blog/BlogNav";
 import { getAllProjects, Project } from "@/lib/projects";
-import dynamic from "next/dynamic";
 
-const Header = dynamic(() => import("@/app/components/Header"));
-const Footer = dynamic(() => import("@/app/components/Footer"));
-const MainLayout = dynamic(() => import("@/app/components/MainLayout"));
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700"],
+  display: "swap",
+});
+
+const literata = Literata({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+const NAV_LINKS = [
+  { href: "/blog", label: "Blog" },
+  { href: "/project", label: "Projects" },
+  { href: "/about", label: "About" },
+];
+
+const FOOTER_LINKS = [
+  { href: "/feed.xml", label: "RSS" },
+  { href: "https://x.com/SutthiponGEarth", label: "Twitter" },
+  { href: "https://github.com/amiearth", label: "GitHub" },
+];
 
 export async function generateMetadata() {
   return {
@@ -52,45 +74,16 @@ const TABS: { key: Project["category"]; label: string }[] = [
   { key: "wordpress", label: "WordPress" },
 ];
 
-// Function to get status badge styling and text
-const getStatusBadge = (status: "active" | "closed" | "maintenance") => {
+const getStatusLabel = (status: "active" | "closed" | "maintenance") => {
   switch (status) {
     case "active":
-      return {
-        text: "Live",
-        emoji: "⚡",
-        className:
-          "bg-gradient-to-r from-emerald-50 via-green-50 to-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-lg hover:shadow-xl hover:from-emerald-100 hover:via-green-100 hover:to-emerald-100 transition-all duration-300 badge-active backdrop-blur-sm",
-        dotColor: "bg-emerald-400 shadow-emerald-400/50",
-        pulseClass: "animate-status-pulse",
-      };
+      return "Live";
     case "maintenance":
-      return {
-        text: "Maintenance",
-        emoji: "🔧",
-        className:
-          "bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 text-amber-700 border border-amber-200/60 shadow-lg hover:shadow-xl hover:from-amber-100 hover:via-orange-100 hover:to-amber-100 transition-all duration-300 backdrop-blur-sm",
-        dotColor: "bg-amber-400 shadow-amber-400/50",
-        pulseClass: "animate-pulse",
-      };
+      return "Maintenance";
     case "closed":
-      return {
-        text: "Archived",
-        emoji: "📦",
-        className:
-          "bg-gradient-to-r from-slate-50 via-gray-50 to-slate-50 text-slate-600 border border-slate-200/60 shadow-md hover:shadow-lg hover:from-slate-100 hover:via-gray-100 hover:to-slate-100 transition-all duration-300 backdrop-blur-sm",
-        dotColor: "bg-slate-400 shadow-slate-400/30",
-        pulseClass: "",
-      };
+      return "Archived";
     default:
-      return {
-        text: "Live",
-        emoji: "⚡",
-        className:
-          "bg-gradient-to-r from-emerald-50 via-green-50 to-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-lg hover:shadow-xl hover:from-emerald-100 hover:via-green-100 hover:to-emerald-100 transition-all duration-300 badge-active backdrop-blur-sm",
-        dotColor: "bg-emerald-400 shadow-emerald-400/50",
-        pulseClass: "animate-status-pulse",
-      };
+      return "Live";
   }
 };
 
@@ -110,121 +103,161 @@ export default async function ProjectsPage({
   );
 
   return (
-    <div>
-      <Header />
-      <MainLayout>
-        <div className="space-y-16 mt-12">
-          {/* Header Section - Minimal & Clean */}
-          <div className="max-w-2xl">
-            <h1 className="text-3xl font-bold mb-2">💪 Projects</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Things I&apos;ve built and experimented with
-            </p>
-          </div>
+    <div
+      className={`${literata.className} relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[var(--am-bg)] text-[var(--am-text-primary)]`}
+    >
+      <div className="flex min-h-screen w-full flex-col">
+        <BlogNav navLinks={NAV_LINKS} />
 
-          {/* Tabs */}
-          <div className="flex flex-wrap items-center gap-2">
-            {TABS.map((tab) => {
-              const isActive = tab.key === activeTab;
-              const href =
-                tab.key === "project" ? "/project" : `/project?tab=${tab.key}`;
+        <main className="flex-1 px-4 py-16 md:px-12">
+          <section className="mx-auto w-full max-w-[960px]">
+            <header className="space-y-2 pb-12">
+              <h1
+                className={`${playfairDisplay.className} text-4xl font-bold text-[var(--am-text-primary)] md:text-[42px]`}
+              >
+                Projects
+              </h1>
+              <p className="text-[16px] leading-[1.6] text-[var(--am-text-secondary)]">
+                Things I&apos;ve built, open-sourced, and occasionally maintain.
+              </p>
+            </header>
 
-              return (
-                <Link
-                  key={tab.key}
-                  href={href}
-                  className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
-                    isActive
-                      ? "border-gray-900 bg-gray-900 text-white dark:border-white dark:bg-white dark:text-gray-900"
-                      : "border-transparent bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800/80 dark:text-gray-300 dark:hover:bg-gray-700"
-                  }`}
-                  aria-selected={isActive}
-                >
-                  {tab.label}
-                </Link>
-              );
-            })}
-          </div>
+            <nav className="mb-10 flex flex-wrap items-center gap-2">
+              {TABS.map((tab) => {
+                const isActive = tab.key === activeTab;
+                const href =
+                  tab.key === "project" ? "/project" : `/project?tab=${tab.key}`;
 
-          {/* Projects List - Clean & Spacious */}
-          <div className="space-y-1">
+                return (
+                  <Link
+                    key={tab.key}
+                    href={href}
+                    className={`rounded-full border px-3 py-1 text-[13px] transition-colors ${
+                      isActive
+                        ? "border-[var(--am-accent)] bg-[var(--am-accent-soft)] text-[var(--am-accent)]"
+                        : "border-[var(--am-border)] text-[var(--am-text-secondary)] hover:text-[var(--am-text-primary)]"
+                    }`}
+                    aria-selected={isActive}
+                  >
+                    {tab.label}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="h-px w-full bg-[var(--am-border)]" />
+
             {filteredProjects.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-gray-200 bg-white/40 p-8 text-center text-gray-500 shadow-sm dark:border-gray-800 dark:bg-gray-900/40 dark:text-gray-400">
+              <div className="py-10 text-[15px] text-[var(--am-text-secondary)]">
                 No {activeTab} items yet.
               </div>
             ) : (
-              filteredProjects.map((project: Project, index: number) => (
-                <Link
-                  key={project.slug}
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block animate-fade-in"
-                  style={{ animationDelay: `${index * 0.05}s` }}
-                >
-                  <div className="relative border-b border-gray-100 py-8 px-6 transition-all duration-300 hover:bg-gray-50/50 dark:border-gray-800/50 dark:hover:bg-gray-900/30 md:px-8">
-                    <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between md:gap-6">
-                      {/* Left: Title + Description (icon removed) */}
-                      <div className="min-w-0 flex-1">
-                        <div className="mb-3 flex items-start">
-                          <div className="min-w-0 flex-1">
-                            <h3 className="text-xl font-medium text-gray-900 transition-colors duration-300 group-hover:text-[#51a800] dark:text-gray-100 dark:group-hover:text-[#6bc924] md:text-2xl">
-                              {project.title ||
-                                project.link
-                                  .replace(/https?:\/\//, "")
-                                  .replace(/\/$/, "")}
-                            </h3>
-                            <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400 md:text-base">
-                              {project.description}
-                            </p>
+              <ul>
+                {filteredProjects.map((project) => {
+                  const isExternal = project.link.startsWith("http");
+                  const projectLinkHost = isExternal
+                    ? new URL(project.link).hostname.replace("www.", "")
+                    : "Internal";
+
+                  return (
+                    <li
+                      key={project.slug}
+                      className="border-b border-[var(--am-border)] py-9"
+                    >
+                      <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-12">
+                        <div className="min-w-0 flex-1 space-y-3">
+                          <h2
+                            className={`${playfairDisplay.className} text-[28px] leading-tight text-[var(--am-text-primary)] md:text-[32px]`}
+                          >
+                            {project.title ||
+                              project.link
+                                .replace(/https?:\/\//, "")
+                                .replace(/\/$/, "")}
+                          </h2>
+                          <p className="text-[15px] leading-[1.7] text-[var(--am-text-secondary)]">
+                            {project.description}
+                          </p>
+
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="rounded-full bg-[var(--am-accent-soft)] px-2.5 py-1 font-mono text-[11px] text-[var(--am-accent)]">
+                              {activeTab.toUpperCase()}
+                            </span>
+                            <span className="rounded-full bg-[var(--am-accent-soft)] px-2.5 py-1 font-mono text-[11px] text-[var(--am-accent)]">
+                              {getStatusLabel(project.status)}
+                            </span>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Right: Status + Date + Arrow */}
-                      <div className="flex flex-shrink-0 items-center gap-6 md:gap-8">
-                        {/* Status Badge - Minimal */}
-                        <div className="flex items-center gap-2">
-                          <div
-                            className={`h-2 w-2 rounded-full ${getStatusBadge(project.status).dotColor} ${getStatusBadge(project.status).pulseClass}`}
-                          ></div>
-                          <span className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                            {getStatusBadge(project.status).text}
+                        <div className="flex shrink-0 flex-col items-start gap-2 text-[13px] md:items-end">
+                          <Link
+                            href={project.link}
+                            target={isExternal ? "_blank" : undefined}
+                            rel={isExternal ? "noopener noreferrer" : undefined}
+                            className="inline-flex items-center gap-1.5 text-[var(--am-accent)] transition-colors hover:text-[var(--am-text-primary)]"
+                          >
+                            {projectLinkHost}
+                            <ExternalLink size={13} aria-hidden="true" />
+                          </Link>
+                          <span className="text-[var(--am-text-muted)]">
+                            {new Date(project.date).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "short",
+                            })}
                           </span>
                         </div>
-
-                        {/* Date - Minimal */}
-                        <span className="hidden text-sm font-light text-gray-400 dark:text-gray-500 md:block">
-                          {new Date(project.date).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "short",
-                          })}
-                        </span>
-
-                        {/* Arrow Icon */}
-                        <svg
-                          className="h-5 w-5 text-gray-300 transition-all duration-300 group-hover:translate-x-1 group-hover:text-[#51a800] dark:text-gray-600 dark:group-hover:text-[#6bc924]"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={1.5}
-                            d="M17 8l4 4m0 0l-4 4m4-4H3"
-                          />
-                        </svg>
                       </div>
-                    </div>
-                  </div>
-                </Link>
-              ))
+                    </li>
+                  );
+                })}
+              </ul>
             )}
+          </section>
+        </main>
+
+        <footer className="border-t border-[var(--am-border)]">
+          <div className="hidden h-16 w-full items-center justify-between px-12 md:flex">
+            <p className="text-[13px] text-[var(--am-text-muted)]">
+              © 2026 Earth. Made with care in Chiang Rai.
+            </p>
+            <div className="flex items-center gap-6 text-[13px] text-[var(--am-text-muted)]">
+              {FOOTER_LINKS.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  target={item.href.startsWith("http") ? "_blank" : undefined}
+                  rel={
+                    item.href.startsWith("http") ? "noopener noreferrer" : undefined
+                  }
+                  className="transition-colors hover:text-[var(--am-text-secondary)]"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
           </div>
-        </div>
-      </MainLayout>
-      <Footer />
+
+          <div className="flex w-full flex-col items-center gap-3 px-6 py-4 text-center md:hidden">
+            <p className="text-[13px] text-[var(--am-text-muted)]">
+              © 2026 Earth. Made with care in Chiang Rai.
+            </p>
+            <div className="flex items-center gap-5 text-[13px] text-[var(--am-text-muted)]">
+              {FOOTER_LINKS.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  target={item.href.startsWith("http") ? "_blank" : undefined}
+                  rel={
+                    item.href.startsWith("http") ? "noopener noreferrer" : undefined
+                  }
+                  className="transition-colors hover:text-[var(--am-text-secondary)]"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </footer>
+      </div>
 
       {/* Structured Data for Projects */}
       <script

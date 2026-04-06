@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import ClientWrapper from "@/app/components/ClientWrapper";
+
+const googleSiteVerification =
+  process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim() ||
+  "53COaAOaFrWxMtJmbjq81KKI97_4CV0mWe0fY98xWlU";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -88,9 +93,11 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    google: "G-JRKV3SB66K",
-  },
+  verification: googleSiteVerification
+    ? {
+        google: googleSiteVerification,
+      }
+    : undefined,
 };
 
 export default function RootLayout({
@@ -99,7 +106,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* Preload critical resources */}
         <link
@@ -159,17 +166,19 @@ export default function RootLayout({
         />
       </head>
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} bg-white text-black antialiased max-w-3xl mx-4 mt-8 lg:mx-auto`}
       >
         {children}
         <SpeedInsights />
         <ClientWrapper />
 
-        <script
-          async
+        <Script
+          id="adsense-script"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6751234358755697"
+          strategy="afterInteractive"
           crossOrigin="anonymous"
-        ></script>
+        />
 
         {/* Service Worker Registration */}
         <script

@@ -1,6 +1,5 @@
 import { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/posts";
-import { getAllProjects } from "@/lib/projects";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://amiearth.com";
@@ -41,17 +40,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(post.date),
       changeFrequency: "monthly" as const,
       priority: 0.6,
-    });
-  });
-
-  // Add projects
-  const projects = getAllProjects();
-  projects.forEach((project) => {
-    links.push({
-      url: project.link,
-      lastModified: new Date(project.date),
-      changeFrequency: "monthly" as const,
-      priority: 0.5,
     });
   });
 

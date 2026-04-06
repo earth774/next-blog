@@ -1,10 +1,32 @@
 import { getAllPosts } from "@/lib/posts";
-import dynamic from "next/dynamic";
+import Link from "next/link";
+import { Literata, Playfair_Display } from "next/font/google";
 import BlogClient from "./BlogClient";
+import BlogNav from "./BlogNav";
 
-const Header = dynamic(() => import("@/app/components/Header"));
-const MainLayout = dynamic(() => import("@/app/components/MainLayout"));
-const Footer = dynamic(() => import("@/app/components/Footer"));
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700"],
+  display: "swap",
+});
+
+const literata = Literata({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
+const NAV_LINKS = [
+  { href: "/blog", label: "Blog" },
+  { href: "/project", label: "Projects" },
+  { href: "/about", label: "About" },
+];
+
+const FOOTER_LINKS = [
+  { href: "/feed.xml", label: "RSS" },
+  { href: "https://x.com/SutthiponGEarth", label: "Twitter" },
+  { href: "https://github.com/amiearth", label: "GitHub" },
+];
 
 // Add metadata for each blog post
 export async function generateMetadata() {
@@ -50,25 +72,74 @@ export default function BlogIndex() {
   const posts = getAllPosts();
 
   return (
-    <>
-      <Header />
-      <MainLayout>
-        {/* Blog Header */}
+    <div
+      className={`${literata.className} relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[var(--am-bg)] text-[var(--am-text-primary)]`}
+    >
+      <div className="flex min-h-screen w-full flex-col">
+        <BlogNav navLinks={NAV_LINKS} />
 
-        <div className="mb-8 mt-8">
-          <h1 className="text-3xl font-bold mb-2 flex items-center gap-3">
-            <span className="text-4xl">💻</span>
-            Blog
-          </h1>
-          <p className="text-gray-600">
-            Sharing insights on web development, programming, and technology
-            from my personal experience
-          </p>
-        </div>
+        <main className="flex-1 px-4 py-16 md:px-12">
+          <section className="mx-auto w-full max-w-[720px]">
+            <header className="space-y-2">
+              <h1
+                className={`${playfairDisplay.className} text-4xl font-bold text-[var(--am-text-primary)] md:text-[42px]`}
+              >
+                Writing
+              </h1>
+              <p className="text-[16px] leading-[1.6] text-[var(--am-text-secondary)]">
+                Occasional thoughts on software, systems, and the quiet craft of
+                building things.
+              </p>
+            </header>
 
-        <BlogClient initialPosts={posts} />
-      </MainLayout>
-      <Footer />
+            <BlogClient initialPosts={posts} />
+          </section>
+        </main>
+
+        <footer className="border-t border-[var(--am-border)]">
+          <div className="hidden h-16 w-full items-center justify-between px-12 md:flex">
+            <p className="text-[13px] text-[var(--am-text-muted)]">
+              © 2026 Earth. Made with care in Chiang Rai.
+            </p>
+            <div className="flex items-center gap-6 text-[13px] text-[var(--am-text-muted)]">
+              {FOOTER_LINKS.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  target={item.href.startsWith("http") ? "_blank" : undefined}
+                  rel={
+                    item.href.startsWith("http") ? "noopener noreferrer" : undefined
+                  }
+                  className="transition-colors hover:text-[var(--am-text-secondary)]"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex w-full flex-col items-center gap-3 px-6 py-4 text-center md:hidden">
+            <p className="text-[13px] text-[var(--am-text-muted)]">
+              © 2026 Earth. Made with care in Chiang Rai.
+            </p>
+            <div className="flex items-center gap-5 text-[13px] text-[var(--am-text-muted)]">
+              {FOOTER_LINKS.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  target={item.href.startsWith("http") ? "_blank" : undefined}
+                  rel={
+                    item.href.startsWith("http") ? "noopener noreferrer" : undefined
+                  }
+                  className="transition-colors hover:text-[var(--am-text-secondary)]"
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </div>
+        </footer>
+      </div>
 
       {/* Structured Data for Blog */}
       <script
@@ -100,6 +171,6 @@ export default function BlogIndex() {
           }),
         }}
       />
-    </>
+    </div>
   );
 }

@@ -1,212 +1,239 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useMemo, useState } from "react";
+import { JetBrains_Mono, Playfair_Display } from "next/font/google";
 import Link from "next/link";
-import {
-  searchAndFilterPosts,
-  paginatePosts,
-  getUniqueYears,
-  type Post,
-} from "@/lib/blog-utils";
-import SearchFilter from "@/app/components/SearchFilter";
-import Pagination from "@/app/components/Pagination";
+import { Search } from "lucide-react";
+import { getUniqueYears, searchAndFilterPosts, type Post } from "@/lib/blog-utils";
 
 interface BlogClientProps {
   initialPosts: Post[];
 }
 
+const POSTS_PER_PAGE = 6;
+
+const playfairDisplay = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["700"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400"],
+  display: "swap",
+});
+
+function getReadingTime(content: string) {
+  const plainText = content.replace(/[#*_`>\-\n]/g, " ").replace(/\s+/g, " ").trim();
+  const estimatedMinutes = Math.max(1, Math.round(plainText.length / 900));
+  return `${estimatedMinutes} min read`;
+}
+
+function getExcerpt(content: string) {
+  const plainText = content.replace(/[#*_`>\-\n]/g, " ").replace(/\s+/g, " ").trim();
+  if (plainText.length <= 130) {
+    return plainText;
+  }
+
+  return `${plainText.slice(0, 130).trim()}...`;
+}
+
+function formatPostDate(dateValue: string) {
+  const parsedDate = new Date(dateValue);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return dateValue;
+  }
+
+  return parsedDate.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
 export default function BlogClient({ initialPosts }: BlogClientProps) {
-  const [titleQuery, setTitleQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedYear, setSelectedYear] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 10;
-
-  // Get available years from posts
-  const availableYears = useMemo(() => {
-    return getUniqueYears(initialPosts);
-  }, [initialPosts]);
-
-  // Memoized filtered posts based on search query and year filter
-  const filteredPosts = useMemo(() => {
-    return searchAndFilterPosts(initialPosts, titleQuery, selectedYear);
-  }, [initialPosts, titleQuery, selectedYear]);
-
-  // Memoized paginated posts
-  const paginatedData = useMemo(() => {
-    return paginatePosts(filteredPosts, currentPage, postsPerPage);
-  }, [filteredPosts, currentPage]);
-
-  // Handle search with useCallback to prevent unnecessary re-renders
-  const handleSearch = useCallback(
-    (newTitleQuery: string, newSelectedYear: string) => {
-      setTitleQuery(newTitleQuery);
-      setSelectedYear(newSelectedYear);
-      setCurrentPage(1); // Reset to first page when searching
-    },
-    []
+  const availableYears = useMemo(() => getUniqueYears(initialPosts), [initialPosts]);
+  const filteredPosts = useMemo(
+    () => searchAndFilterPosts(initialPosts, searchQuery, selectedYear),
+    [initialPosts, searchQuery, selectedYear]
   );
-
-  // Handle page change with useCallback
-  const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page);
-    // Scroll to top when changing pages
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
-
-  const hasActiveFilters = titleQuery.trim() !== "" || selectedYear !== "all";
+  const totalPages = Math.max(1, Math.ceil(filteredPosts.length / POSTS_PER_PAGE));
+  const activePage = Math.min(currentPage, totalPages);
+  const paginatedPosts = useMemo(() => {
+    const startIndex = (activePage - 1) * POSTS_PER_PAGE;
+    return filteredPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+  }, [filteredPosts, activePage]);
 
   return (
-    <div className="w-full mt-8">
-      {/* Search and Filter */}
-      <SearchFilter
-        onSearch={handleSearch}
-        availableYears={availableYears}
-        initialTitleQuery={titleQuery}
-        initialYear={selectedYear}
-      />
-
-      {/* Search Results Info */}
-      {hasActiveFilters && (
-        <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <div className="flex items-center gap-2 text-sm text-gray-700">
-            <svg
-              className="w-4 h-4 text-gray-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+    <div className="mt-7 w-full">
+      <div className="flex flex-col gap-4 border-b border-[var(--am-border)] pb-5 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-wrap items-center gap-7">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedYear("all");
+              setCurrentPage(1);
+            }}
+            className="group inline-flex flex-col items-center gap-1 text-[14px]"
+          >
+            <span
+              className={`transition-colors ${
+                selectedYear === "all"
+                  ? "font-semibold text-[var(--am-text-primary)]"
+                  : "text-[var(--am-text-muted)] group-hover:text-[var(--am-text-secondary)]"
+              }`}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            {filteredPosts.length > 0
-              ? `พบ ${filteredPosts.length} บทความจากการค้นหา`
-              : `ไม่พบบทความที่ตรงกับเงื่อนไขการค้นหา`}
-          </div>
+              All
+            </span>
+            <span
+              className={`h-px w-5 bg-[var(--am-accent)] transition-opacity ${
+                selectedYear === "all" ? "opacity-100" : "opacity-0"
+              }`}
+            />
+          </button>
+          {availableYears.map((year) => (
+            <button
+              key={year}
+              type="button"
+              onClick={() => {
+                setSelectedYear(year);
+                setCurrentPage(1);
+              }}
+              className={`text-[14px] transition-colors ${
+                selectedYear === year
+                  ? "font-semibold text-[var(--am-text-primary)]"
+                  : "text-[var(--am-text-muted)] hover:text-[var(--am-text-secondary)]"
+              }`}
+            >
+              {year}
+            </button>
+          ))}
         </div>
-      )}
 
-      {/* Posts List */}
-      {paginatedData.posts.length > 0 ? (
-        <>
-          <div className="grid gap-4">
-            {paginatedData.posts.map((post, index) => (
-              <article key={post.slug} className="group relative">
-                <Link
-                  href={`/blog/${post.slug}`}
-                  className="block p-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md hover:border-[#51a800] transition-all duration-300 group-hover:scale-[1.02]"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <h2 className="text-lg font-semibold text-gray-900 group-hover:text-[#51a800] transition-colors duration-200 line-clamp-2">
-                        {post.title}
-                      </h2>
-                      <div className="flex items-center gap-2 mt-3">
-                        <svg
-                          className="w-4 h-4 text-gray-400"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                          />
-                        </svg>
-                        <time className="text-sm text-gray-500 font-medium">
-                          {post.date}
-                        </time>
-                      </div>
-                    </div>
-                    <div className="flex-shrink-0">
-                      <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-[#51a800] transition-colors duration-200">
-                        <svg
-                          className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors duration-200"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Post number indicator */}
-                  <div className="absolute -left-2 -top-2 w-6 h-6 bg-[#51a800] text-white text-xs font-bold rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                    {(currentPage - 1) * postsPerPage + index + 1}
-                  </div>
-                </Link>
-              </article>
-            ))}
-          </div>
-
-          {/* Pagination */}
-          <Pagination
-            currentPage={paginatedData.currentPage}
-            totalPages={paginatedData.totalPages}
-            onPageChange={handlePageChange}
-            totalPosts={paginatedData.totalPosts}
-            postsPerPage={postsPerPage}
+        <label className="flex w-full max-w-[220px] items-center gap-2 border-b border-[var(--am-border)] py-1 text-[14px] text-[var(--am-text-muted)]">
+          <Search size={15} aria-hidden="true" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(event) => {
+              setSearchQuery(event.target.value);
+              setCurrentPage(1);
+            }}
+            placeholder="Search posts..."
+            className="w-full bg-transparent text-[var(--am-text-secondary)] outline-none placeholder:text-[var(--am-text-muted)]"
+            aria-label="Search posts"
           />
-        </>
-      ) : (
-        // No posts found
-        <div className="text-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-300">
-          <div className="max-w-md mx-auto">
-            <svg
-              className="w-16 h-16 text-gray-400 mx-auto mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        </label>
+      </div>
+
+      {filteredPosts.length > 0 ? (
+        <div>
+          {paginatedPosts.map((post, index) => (
+            <article
+              key={post.slug}
+              className="border-b border-[var(--am-border)] py-7 last:border-b"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1}
-                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-              />
-            </svg>
-            <div className="text-gray-500 text-lg mb-3">
-              {hasActiveFilters
-                ? "ไม่พบบทความที่ตรงกับเงื่อนไขการค้นหา"
-                : "ไม่มีบทความ"}
-            </div>
-            <div className="text-gray-400 text-sm mb-4">
-              {hasActiveFilters && "ลองปรับเปลี่ยนเงื่อนไขการค้นหาหรือกรอง"}
-            </div>
-            {hasActiveFilters && (
-              <button
-                onClick={() => handleSearch("", "all")}
-                className="inline-flex items-center px-4 py-2 text-sm font-medium text-[#51a800] bg-white border border-[#51a800] rounded-lg hover:bg-[#51a800] hover:text-white transition-all duration-200"
-              >
-                <svg
-                  className="w-4 h-4 mr-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+              <Link href={`/blog/${post.slug}`} className="group block space-y-2">
+                <div className="flex flex-wrap items-center gap-3 text-[12px]">
+                  <span className={`${jetbrainsMono.className} text-[11px] text-[var(--am-text-muted)]`}>
+                    {((activePage - 1) * POSTS_PER_PAGE + index + 1)
+                      .toString()
+                      .padStart(2, "0")}
+                  </span>
+                  <span
+                    className={`${jetbrainsMono.className} rounded-full bg-[var(--am-accent-soft)] px-[10px] py-[3px] text-[11px] text-[var(--am-accent)]`}
+                  >
+                    {formatPostDate(post.date).slice(-4)}
+                  </span>
+                  <span className="text-[12px] text-[var(--am-text-muted)]">
+                    {formatPostDate(post.date)}
+                  </span>
+                </div>
+                <h2
+                  className={`${playfairDisplay.className} text-[26px] font-bold leading-tight text-[var(--am-text-primary)] transition-colors group-hover:text-[var(--am-accent)] md:text-[30px]`}
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                  />
-                </svg>
-                แสดงบทความทั้งหมด
-              </button>
-            )}
-          </div>
+                  {post.title}
+                </h2>
+                <p className="text-[15px] leading-[1.6] text-[var(--am-text-secondary)]">
+                  {getExcerpt(post.content)}
+                </p>
+                <p className="text-[12px] text-[var(--am-text-muted)]">
+                  {getReadingTime(post.content)}
+                </p>
+              </Link>
+            </article>
+          ))}
+
+          <nav
+            className="flex flex-wrap items-center justify-between gap-3 py-6"
+            aria-label="Blog pagination"
+          >
+            <button
+              type="button"
+              onClick={() => setCurrentPage((previousPage) => Math.max(1, previousPage - 1))}
+              disabled={activePage === 1}
+              className="rounded border border-[var(--am-border)] px-3 py-1.5 text-[13px] text-[var(--am-text-secondary)] transition-colors hover:text-[var(--am-text-primary)] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Previous
+            </button>
+
+            <div className="flex items-center gap-2">
+              {Array.from({ length: totalPages }, (_, index) => {
+                const pageNumber = index + 1;
+                const isActivePage = pageNumber === activePage;
+
+                return (
+                  <button
+                    key={pageNumber}
+                    type="button"
+                    onClick={() => setCurrentPage(pageNumber)}
+                    className={`h-8 min-w-8 rounded border px-2 text-[13px] transition-colors ${
+                      isActivePage
+                        ? "border-[var(--am-accent)] bg-[var(--am-accent-soft)] text-[var(--am-accent)]"
+                        : "border-[var(--am-border)] text-[var(--am-text-secondary)] hover:text-[var(--am-text-primary)]"
+                    }`}
+                    aria-current={isActivePage ? "page" : undefined}
+                    aria-label={`Go to page ${pageNumber}`}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              type="button"
+              onClick={() =>
+                setCurrentPage((previousPage) => Math.min(totalPages, previousPage + 1))
+              }
+              disabled={activePage === totalPages}
+              className="rounded border border-[var(--am-border)] px-3 py-1.5 text-[13px] text-[var(--am-text-secondary)] transition-colors hover:text-[var(--am-text-primary)] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Next
+            </button>
+          </nav>
+        </div>
+      ) : (
+        <div className="py-14 text-center">
+          <p className="text-[15px] text-[var(--am-text-secondary)]">
+            No posts match this filter.
+          </p>
+          <button
+            type="button"
+            onClick={() => {
+              setSearchQuery("");
+              setSelectedYear("all");
+              setCurrentPage(1);
+            }}
+            className="mt-3 text-[14px] text-[var(--am-accent)] transition-colors hover:opacity-80"
+          >
+            Clear filters
+          </button>
         </div>
       )}
     </div>

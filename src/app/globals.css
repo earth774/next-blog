@@ -38,6 +38,14 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --am-accent: #2d5016;
+  --am-accent-soft: #e8f0e1;
+  --am-bg: #f7f5f0;
+  --am-bg-secondary: #edeae3;
+  --am-border: #e2ddd7;
+  --am-text-muted: #a09a94;
+  --am-text-primary: #1a1714;
+  --am-text-secondary: #6b6560;
 }
 
 @media (prefers-color-scheme: dark) {
