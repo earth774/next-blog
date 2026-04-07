@@ -12,3 +12,7 @@
 - Blog workflow Cursor subagents live under `.cursor/agents/`: `article-researcher.md`, `article-writer.md`, and `article-reviewer.md`.
 - Third-party scripts in the App Router root layout use `next/script` with `afterInteractive` where raw `<script>` tags risk hydration mismatches.
 - Blog route navigation is centralized in `src/app/blog/BlogNav.tsx`, including a mobile `Menu` toggle that reveals `Blog`, `Projects`, and `About` links.
+- Blog posts are Markdown files at `src/content/posts/<slug>/<slug>.md` and are loaded via `getAllPosts` in `src/lib/posts.ts`.
+- Repo-root `BLOG_TECH_TASK_LIST.md` holds the tech blog editorial backlog and per-article task checklists.
+- Substantial new posts often follow a draft-then-polish flow: article-writer (or equivalent) first, then article-reviewer for accuracy and wording.
+- The blog index uses client-side pagination in `src/app/blog/BlogClient.tsx` (a fixed posts-per-page constant).
