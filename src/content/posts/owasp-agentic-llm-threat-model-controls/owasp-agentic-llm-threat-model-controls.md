@@ -1,6 +1,6 @@
 ---
 title: "OWASP สำหรับแอป Agentic/LLM — Threat Model + Controls"
-date: "2026-04-07"
+date: "2026-04-08"
 excerpt: "ทำไมระบบ agentic/LLM ขยาย attack surface อย่างมีนัยสำคัญ — ผูกภาพรวมกับ OWASP Top 10 for LLM Applications (2025) ทั้งมุมเฉพาะ agent (tools, memory, MCP) และแนวปฏิบัติควบคุมความเสี่ยงที่วิศวกรนำไปใช้ได้จริง"
 ---
 
