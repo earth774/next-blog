@@ -1,5 +1,6 @@
 ## Learned User Preferences
 
+- When the topic is Anthropic's visual/UI design product, use the product name **Claude Design** rather than referring to it only as "Claude."
 - Prefers Thai for conversational product and UI requests; English remains acceptable for code and technical identifiers when clearer.
 - Prefers Lucide React icons over text-only affordances for actions such as external links.
 - When Pencil MCP is unavailable, accepts implementing UI from the checked-in `design/amiearth.pen` file instead of blocking on MCP.
