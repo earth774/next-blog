@@ -39,6 +39,10 @@ function findPostImage(slug: string): string | null {
 export function getPostBySlug(slug: string): Post | null {
   const fullPath = path.join(postsDirectory, `${slug}/${slug}.md`);
 
+  if (!fs.existsSync(fullPath)) {
+    return null;
+  }
+
   try {
     const fileContents = fs.readFileSync(fullPath, "utf8");
     const { data, content } = matter(fileContents);
