@@ -65,6 +65,64 @@ const getStatusLabel = (status: "active" | "closed" | "maintenance") => {
   }
 };
 
+function ProjectLink({
+  project,
+  className,
+  children,
+}: {
+  project: Project;
+  className: string;
+  children: React.ReactNode;
+}) {
+  // Placeholder links ("#") render as plain blocks rather than dead links.
+  if (project.link === "#") return <div className={className}>{children}</div>;
+  const isExternal = project.link.startsWith("http");
+  return (
+    <Link
+      href={project.link}
+      target={isExternal ? "_blank" : undefined}
+      rel={isExternal ? "noopener noreferrer" : undefined}
+      className={className}
+    >
+      {children}
+    </Link>
+  );
+}
+
+function ProjectMeta({ project }: { project: Project }) {
+  return (
+    <p
+      className={`${jetbrainsMono.className} flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.12em] text-[var(--am-text-muted)]`}
+    >
+      <time dateTime={project.date}>
+        {new Date(project.date).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "short",
+        })}
+      </time>
+      {project.status !== "active" ? (
+        <span className="rounded-full bg-[var(--am-bg-secondary)] px-2.5 py-[3px] normal-case tracking-normal text-[var(--am-text-secondary)]">
+          {getStatusLabel(project.status)}
+        </span>
+      ) : null}
+    </p>
+  );
+}
+
+function ProjectHost({ project }: { project: Project }) {
+  if (!project.link.startsWith("http")) return null;
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[13px] text-[var(--am-accent)]">
+      {new URL(project.link).hostname.replace("www.", "")}
+      <ArrowUpRight
+        size={13}
+        aria-hidden="true"
+        className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+      />
+    </span>
+  );
+}
+
 export default async function ProjectsPage({
   searchParams,
 }: {
@@ -79,6 +137,10 @@ export default async function ProjectsPage({
   const filteredProjects = projects.filter(
     (project) => project.category === activeTab,
   );
+  const coverProjects = filteredProjects.filter(
+    (project): project is Project & { image: string } => Boolean(project.image),
+  );
+  const indexProjects = filteredProjects.filter((project) => !project.image);
 
   return (
     <div
@@ -150,93 +212,85 @@ export default async function ProjectsPage({
                   </Link>
                 </div>
               ) : (
-                <ul>
-                  {filteredProjects.map((project) => {
-                    const hasLink = project.link !== "#";
-                    const isExternal = project.link.startsWith("http");
-                    const projectLinkHost = isExternal
-                      ? new URL(project.link).hostname.replace("www.", "")
-                      : null;
-                    const rowClassName =
-                      "group flex flex-col gap-5 py-8 sm:flex-row sm:items-start sm:gap-8";
-                    const rowContent = (
-                      <>
-                        {project.image ? (
-                          <div className="shrink-0 overflow-hidden sm:w-56">
+                <>
+                  {coverProjects.length > 0 ? (
+                    <div className="mt-10 grid gap-px border border-[var(--am-border)] bg-[var(--am-border)] md:grid-cols-3">
+                      {coverProjects.map((project) => (
+                        <ProjectLink
+                          key={project.slug}
+                          project={project}
+                          className="group flex flex-col bg-[var(--am-bg)] transition-colors hover:bg-[var(--am-bg-secondary)]"
+                        >
+                          <div className="overflow-hidden">
                             <Image
                               src={project.image}
                               alt=""
                               width={960}
                               height={640}
-                              className="aspect-[3/2] w-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-[1.03]"
-                              sizes="(max-width: 639px) calc(100vw - 32px), 224px"
+                              className="aspect-[3/2] w-full object-cover transition-transform duration-500 motion-safe:group-hover:scale-[1.03]"
+                              sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1056px) calc((100vw - 96px) / 3), 320px"
                             />
                           </div>
-                        ) : null}
-                        <div className="min-w-0 flex-1 space-y-2">
-                          <p
-                            className={`${jetbrainsMono.className} flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] uppercase tracking-[0.12em] text-[var(--am-text-muted)]`}
-                          >
-                            <time dateTime={project.date}>
-                              {new Date(project.date).toLocaleDateString("en-US", {
-                                year: "numeric",
-                                month: "short",
-                              })}
-                            </time>
-                            <span aria-hidden="true">·</span>
-                            <span
-                              className={`ml-1 rounded-full px-2.5 py-[3px] normal-case tracking-normal ${
-                                project.status === "closed"
-                                  ? "bg-[var(--am-bg-secondary)] text-[var(--am-text-secondary)]"
-                                  : "bg-[var(--am-accent-soft)] text-[var(--am-accent)]"
-                              }`}
-                            >
-                              {getStatusLabel(project.status)}
-                            </span>
-                          </p>
-                          <h2
-                            className={`${playfairDisplay.className} text-[22px] font-semibold leading-snug transition-colors group-hover:text-[var(--am-accent)] md:text-[26px]`}
-                          >
-                            {project.title}
-                          </h2>
-                          <p className="max-w-[640px] text-[15px] leading-[1.65] text-[var(--am-text-secondary)]">
-                            {project.description}
-                          </p>
-                          {projectLinkHost ? (
-                            <span className="inline-flex items-center gap-1.5 pt-1 text-[13px] text-[var(--am-accent)]">
-                              {projectLinkHost}
-                              <ArrowUpRight
-                                size={13}
-                                aria-hidden="true"
-                                className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                              />
-                            </span>
-                          ) : null}
-                        </div>
-                      </>
-                    );
+                          <div className="flex flex-1 flex-col justify-between gap-6 p-6">
+                            <div className="space-y-2">
+                              <ProjectMeta project={project} />
+                              <h2
+                                className={`${playfairDisplay.className} text-[22px] font-semibold leading-snug transition-colors group-hover:text-[var(--am-accent)]`}
+                              >
+                                {project.title}
+                              </h2>
+                              <p className="text-[14px] leading-[1.6] text-[var(--am-text-secondary)]">
+                                {project.description}
+                              </p>
+                            </div>
+                            <ProjectHost project={project} />
+                          </div>
+                        </ProjectLink>
+                      ))}
+                    </div>
+                  ) : null}
 
-                    return (
-                      <li
-                        key={project.slug}
-                        className="border-b border-[var(--am-border)]"
+                  {indexProjects.length > 0 ? (
+                    <section
+                      aria-labelledby="project-index"
+                      className={coverProjects.length > 0 ? "pt-14" : "pt-2"}
+                    >
+                      <h2
+                        id="project-index"
+                        className={
+                          coverProjects.length > 0
+                            ? `${playfairDisplay.className} text-[24px] font-bold md:text-[28px]`
+                            : "sr-only"
+                        }
                       >
-                        {hasLink ? (
-                          <Link
-                            href={project.link}
-                            target={isExternal ? "_blank" : undefined}
-                            rel={isExternal ? "noopener noreferrer" : undefined}
-                            className={rowClassName}
-                          >
-                            {rowContent}
-                          </Link>
-                        ) : (
-                          <div className={rowClassName}>{rowContent}</div>
-                        )}
-                      </li>
-                    );
-                  })}
-                </ul>
+                        More projects
+                      </h2>
+                      <ul className={coverProjects.length > 0 ? "mt-4" : ""}>
+                        {indexProjects.map((project) => (
+                          <li key={project.slug} className="border-b border-[var(--am-border)]">
+                            <ProjectLink
+                              project={project}
+                              className="group grid gap-2 py-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)_200px] md:items-baseline md:gap-8"
+                            >
+                              <h3
+                                className={`${playfairDisplay.className} text-[20px] font-semibold leading-snug transition-colors group-hover:text-[var(--am-accent)]`}
+                              >
+                                {project.title}
+                              </h3>
+                              <p className="text-[14px] leading-[1.6] text-[var(--am-text-secondary)]">
+                                {project.description}
+                              </p>
+                              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1 md:flex-col md:items-end md:gap-y-1.5 md:pt-0">
+                                <ProjectMeta project={project} />
+                                <ProjectHost project={project} />
+                              </div>
+                            </ProjectLink>
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+                </>
               )}
             </div>
           </section>
