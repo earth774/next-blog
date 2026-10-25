@@ -1,27 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
-import { Literata, Playfair_Display } from "next/font/google";
+import { ArrowUpRight } from "lucide-react";
 import SiteNav from "@/app/components/SiteNav";
+import SiteFooter from "@/app/components/SiteFooter";
+import { jetbrainsMono, literata, playfairDisplay } from "@/lib/fonts";
 import { getAllProjects, Project } from "@/lib/projects";
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["700"],
-  display: "swap",
-});
-
-const literata = Literata({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
-
-const FOOTER_LINKS = [
-  { href: "/feed.xml", label: "RSS" },
-  { href: "https://x.com/SutthiponGEarth", label: "Twitter" },
-  { href: "https://github.com/amiearth", label: "GitHub" },
-];
 
 export async function generateMetadata() {
   return {
@@ -104,164 +87,162 @@ export default async function ProjectsPage({
       <div className="flex min-h-screen w-full flex-col">
         <SiteNav />
 
-        <main className="flex-1 px-4 py-16 md:px-12">
-          <section className="mx-auto w-full max-w-[960px]">
-            <header className="space-y-2 pb-12">
+        <main className="flex-1">
+          <header className="border-b border-[var(--am-border)] px-4 py-14 md:px-12 md:py-20">
+            <div className="mx-auto w-full max-w-[960px]">
+              <p
+                className={`${jetbrainsMono.className} text-[11px] uppercase tracking-[0.16em] text-[var(--am-accent)]`}
+              >
+                Projects · {projects.length} items
+              </p>
               <h1
-                className={`${playfairDisplay.className} text-4xl font-bold text-[var(--am-text-primary)] md:text-[42px]`}
+                className={`${playfairDisplay.className} mt-3 text-[44px] font-bold leading-none tracking-[-0.02em] md:text-[64px]`}
               >
                 Projects
               </h1>
-              <p className="text-[16px] leading-[1.6] text-[var(--am-text-secondary)]">
+              <p className="mt-5 max-w-[560px] text-[17px] leading-[1.75] text-[var(--am-text-secondary)]">
                 Things I&apos;ve built, open-sourced, and occasionally maintain.
               </p>
-            </header>
+            </div>
+          </header>
 
-            <nav className="mb-10 flex flex-wrap items-center gap-2">
-              {TABS.map((tab) => {
-                const isActive = tab.key === activeTab;
-                const href =
-                  tab.key === "project" ? "/project" : `/project?tab=${tab.key}`;
-
-                return (
-                  <Link
-                    key={tab.key}
-                    href={href}
-                    className={`rounded-full border px-3 py-1 text-[13px] transition-colors ${
-                      isActive
-                        ? "border-[var(--am-accent)] bg-[var(--am-accent-soft)] text-[var(--am-accent)]"
-                        : "border-[var(--am-border)] text-[var(--am-text-secondary)] hover:text-[var(--am-text-primary)]"
-                    }`}
-                    aria-selected={isActive}
-                  >
-                    {tab.label}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            <div className="h-px w-full bg-[var(--am-border)]" />
-
-            {filteredProjects.length === 0 ? (
-              <div className="py-10 text-[15px] text-[var(--am-text-secondary)]">
-                No {activeTab} items yet.
-              </div>
-            ) : (
-              <ul>
-                {filteredProjects.map((project) => {
-                  const isExternal = project.link.startsWith("http");
-                  const projectLinkHost = isExternal
-                    ? new URL(project.link).hostname.replace("www.", "")
-                    : "Internal";
+          <section className="px-4 py-10 md:px-12 md:py-14">
+            <div className="mx-auto w-full max-w-[960px]">
+              <nav
+                className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-[var(--am-border)] pb-4"
+                aria-label="Project categories"
+              >
+                {TABS.map((tab) => {
+                  const isActive = tab.key === activeTab;
+                  const href =
+                    tab.key === "project" ? "/project" : `/project?tab=${tab.key}`;
 
                   return (
-                    <li
-                      key={project.slug}
-                      className="border-b border-[var(--am-border)] py-9"
+                    <Link
+                      key={tab.key}
+                      href={href}
+                      aria-current={isActive ? "page" : undefined}
+                      className={`${jetbrainsMono.className} border-b py-1 text-[12px] uppercase tracking-[0.12em] transition-colors ${
+                        isActive
+                          ? "border-[var(--am-accent)] text-[var(--am-text-primary)]"
+                          : "border-transparent text-[var(--am-text-muted)] hover:text-[var(--am-text-secondary)]"
+                      }`}
                     >
-                      <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-12">
-                        {project.image ? (
-                          <Image
-                            src={project.image}
-                            alt=""
-                            width={960}
-                            height={640}
-                            className="aspect-[3/2] w-full shrink-0 object-cover md:w-48"
-                            sizes="(max-width: 767px) calc(100vw - 32px), 192px"
-                          />
-                        ) : null}
-                        <div className="min-w-0 flex-1 space-y-3">
-                          <h2
-                            className={`${playfairDisplay.className} text-[28px] leading-tight text-[var(--am-text-primary)] md:text-[32px]`}
-                          >
-                            {project.title ||
-                              project.link
-                                .replace(/https?:\/\//, "")
-                                .replace(/\/$/, "")}
-                          </h2>
-                          <p className="text-[15px] leading-[1.7] text-[var(--am-text-secondary)]">
-                            {project.description}
-                          </p>
+                      {tab.label}
+                    </Link>
+                  );
+                })}
+              </nav>
 
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className="rounded-full bg-[var(--am-accent-soft)] px-2.5 py-1 font-mono text-[11px] text-[var(--am-accent)]">
-                              {activeTab.toUpperCase()}
-                            </span>
-                            <span className="rounded-full bg-[var(--am-accent-soft)] px-2.5 py-1 font-mono text-[11px] text-[var(--am-accent)]">
+              {filteredProjects.length === 0 ? (
+                <div className="py-20 text-center">
+                  <p className={`${playfairDisplay.className} text-[24px] font-semibold`}>
+                    Nothing here yet
+                  </p>
+                  <p className="mt-2 text-[15px] text-[var(--am-text-secondary)]">
+                    No {TABS.find((tab) => tab.key === activeTab)?.label} items to show.
+                  </p>
+                  <Link
+                    href="/project"
+                    className="mt-6 inline-flex border border-[var(--am-border)] px-5 py-2 text-[14px] text-[var(--am-accent)] transition-colors hover:bg-[var(--am-bg-secondary)]"
+                  >
+                    View all projects
+                  </Link>
+                </div>
+              ) : (
+                <ul>
+                  {filteredProjects.map((project) => {
+                    const hasLink = project.link !== "#";
+                    const isExternal = project.link.startsWith("http");
+                    const projectLinkHost = isExternal
+                      ? new URL(project.link).hostname.replace("www.", "")
+                      : null;
+                    const rowClassName =
+                      "group flex flex-col gap-5 py-8 sm:flex-row sm:items-start sm:gap-8";
+                    const rowContent = (
+                      <>
+                        {project.image ? (
+                          <div className="shrink-0 overflow-hidden sm:w-56">
+                            <Image
+                              src={project.image}
+                              alt=""
+                              width={960}
+                              height={640}
+                              className="aspect-[3/2] w-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-[1.03]"
+                              sizes="(max-width: 639px) calc(100vw - 32px), 224px"
+                            />
+                          </div>
+                        ) : null}
+                        <div className="min-w-0 flex-1 space-y-2">
+                          <p
+                            className={`${jetbrainsMono.className} flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] uppercase tracking-[0.12em] text-[var(--am-text-muted)]`}
+                          >
+                            <time dateTime={project.date}>
+                              {new Date(project.date).toLocaleDateString("en-US", {
+                                year: "numeric",
+                                month: "short",
+                              })}
+                            </time>
+                            <span aria-hidden="true">·</span>
+                            <span
+                              className={`ml-1 rounded-full px-2.5 py-[3px] normal-case tracking-normal ${
+                                project.status === "closed"
+                                  ? "bg-[var(--am-bg-secondary)] text-[var(--am-text-secondary)]"
+                                  : "bg-[var(--am-accent-soft)] text-[var(--am-accent)]"
+                              }`}
+                            >
                               {getStatusLabel(project.status)}
                             </span>
-                          </div>
+                          </p>
+                          <h2
+                            className={`${playfairDisplay.className} text-[22px] font-semibold leading-snug transition-colors group-hover:text-[var(--am-accent)] md:text-[26px]`}
+                          >
+                            {project.title}
+                          </h2>
+                          <p className="max-w-[640px] text-[15px] leading-[1.65] text-[var(--am-text-secondary)]">
+                            {project.description}
+                          </p>
+                          {projectLinkHost ? (
+                            <span className="inline-flex items-center gap-1.5 pt-1 text-[13px] text-[var(--am-accent)]">
+                              {projectLinkHost}
+                              <ArrowUpRight
+                                size={13}
+                                aria-hidden="true"
+                                className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                              />
+                            </span>
+                          ) : null}
                         </div>
+                      </>
+                    );
 
-                        <div className="flex shrink-0 flex-col items-start gap-2 text-[13px] md:items-end">
+                    return (
+                      <li
+                        key={project.slug}
+                        className="border-b border-[var(--am-border)]"
+                      >
+                        {hasLink ? (
                           <Link
                             href={project.link}
                             target={isExternal ? "_blank" : undefined}
                             rel={isExternal ? "noopener noreferrer" : undefined}
-                            className="inline-flex items-center gap-1.5 text-[var(--am-accent)] transition-colors hover:text-[var(--am-text-primary)]"
+                            className={rowClassName}
                           >
-                            {projectLinkHost}
-                            <ExternalLink size={13} aria-hidden="true" />
+                            {rowContent}
                           </Link>
-                          <span className="text-[var(--am-text-muted)]">
-                            {new Date(project.date).toLocaleDateString("en-US", {
-                              year: "numeric",
-                              month: "short",
-                            })}
-                          </span>
-                        </div>
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+                        ) : (
+                          <div className={rowClassName}>{rowContent}</div>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
           </section>
         </main>
 
-        <footer className="border-t border-[var(--am-border)]">
-          <div className="hidden h-16 w-full items-center justify-between px-12 md:flex">
-            <p className="text-[13px] text-[var(--am-text-muted)]">
-              © 2026 Earth. Made with care in Chiang Rai.
-            </p>
-            <div className="flex items-center gap-6 text-[13px] text-[var(--am-text-muted)]">
-              {FOOTER_LINKS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    item.href.startsWith("http") ? "noopener noreferrer" : undefined
-                  }
-                  className="transition-colors hover:text-[var(--am-text-secondary)]"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex w-full flex-col items-center gap-3 px-6 py-4 text-center md:hidden">
-            <p className="text-[13px] text-[var(--am-text-muted)]">
-              © 2026 Earth. Made with care in Chiang Rai.
-            </p>
-            <div className="flex items-center gap-5 text-[13px] text-[var(--am-text-muted)]">
-              {FOOTER_LINKS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    item.href.startsWith("http") ? "noopener noreferrer" : undefined
-                  }
-                  className="transition-colors hover:text-[var(--am-text-secondary)]"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </footer>
+        <SiteFooter />
       </div>
 
       {/* Structured Data for Projects */}
