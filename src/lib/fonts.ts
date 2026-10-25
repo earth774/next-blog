@@ -4,6 +4,7 @@ export const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
   weight: ["600", "700"],
   display: "swap",
+  variable: "--font-playfair",
 });
 
 export const literata = Literata({
@@ -16,4 +17,5 @@ export const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   weight: ["400"],
   display: "swap",
+  variable: "--font-jetbrains-mono",
 });

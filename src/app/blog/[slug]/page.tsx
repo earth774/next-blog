@@ -210,7 +210,9 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
               />
             ) : null}
 
-            <div className={`${styles.content} mt-10`}>
+            <div
+              className={`${styles.content} ${playfairDisplay.variable} ${jetbrainsMono.variable} mt-10`}
+            >
               <Markdown>{post.content}</Markdown>
             </div>
 
