@@ -11,6 +11,12 @@ import { formatPostDate, getExcerpt, getReadingTime } from "@/lib/post-meta";
 import type { Post } from "@/lib/blog-utils";
 
 const TECH_STACK = ["TypeScript", "Go", "React", "PostgreSQL", "Docker"];
+const HOME_COVERS: Record<string, string | undefined> = {
+  "claude-cursor-skills-skill-md": "/images/home/agent-skills-cover.webp",
+  excaflow: "/images/home/excaflow-cover.webp",
+  lamoon: "/images/home/lamoon-cover.webp",
+  "color-picker": "/images/home/color-picker-cover.webp",
+};
 
 function PostMeta({ post }: { post: Post }) {
   return (
@@ -84,6 +90,7 @@ export const revalidate = 3600; // Revalidate every hour
 export default function Home() {
   const posts = getAllPosts();
   const [featuredPost, ...recentPosts] = posts;
+  const featuredImage = featuredPost?.image || HOME_COVERS[featuredPost?.slug ?? ""];
   const latestPosts = recentPosts.slice(0, 4);
   const selectedProjects = getAllProjects()
     .filter((project) => project.category === "project")
@@ -101,16 +108,19 @@ export default function Home() {
           <section className="border-b border-[var(--am-border)] px-4 py-16 md:px-12 md:py-28">
             <div className="mx-auto flex w-full max-w-[960px] flex-col gap-8 md:flex-row md:items-end md:justify-between">
               <div className="max-w-[640px]">
-                <p
-                  className={`${jetbrainsMono.className} text-[11px] uppercase tracking-[0.16em] text-[var(--am-accent)]`}
-                >
-                  Software Developer · Chiang Rai, Thailand
-                </p>
                 <h1
-                  className={`${playfairDisplay.className} mt-5 text-[56px] font-bold leading-none tracking-[-0.02em] md:text-[88px]`}
+                  className={`${playfairDisplay.className} text-[56px] font-bold leading-none tracking-[-0.02em] md:text-[88px]`}
                 >
                   Earth
                 </h1>
+                <p className="mt-5 text-[19px] font-medium md:text-[22px]">
+                  Sutthiphong Nuanma
+                </p>
+                <p
+                  className={`${jetbrainsMono.className} mt-2 text-[11px] uppercase tracking-[0.16em] text-[var(--am-accent)]`}
+                >
+                  Software Developer · Chiang Rai, Thailand
+                </p>
                 <p className="mt-6 max-w-[540px] text-[17px] leading-[1.8] md:text-[19px] text-[var(--am-text-secondary)]">
                   I build thoughtful software and write about the craft of
                   programming. Currently exploring distributed systems and
@@ -139,7 +149,7 @@ export default function Home() {
               <div className="flex items-center gap-4 md:flex-col md:items-end">
                 <Image
                   src="/profile.jpg"
-                  alt="Earth profile photo"
+                  alt="Sutthiphong Nuanma (Earth)"
                   width={84}
                   height={84}
                   priority
@@ -190,15 +200,15 @@ export default function Home() {
                       </span>
                       <PostMeta post={featuredPost} />
                     </div>
-                    {featuredPost.image ? (
+                    {featuredImage ? (
                       <div className="overflow-hidden">
                         <Image
-                          src={featuredPost.image}
+                          src={featuredImage}
                           alt=""
                           width={1200}
-                          height={630}
-                          className="aspect-[2/1] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                          sizes="(max-width: 768px) 100vw, 960px"
+                          height={800}
+                          className="aspect-[2/1] w-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-[1.02]"
+                          sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1056px) calc(100vw - 96px), 960px"
                         />
                       </div>
                     ) : null}
@@ -266,30 +276,48 @@ export default function Home() {
                 </div>
 
                 <div className="mt-10 grid gap-px border border-[var(--am-border)] bg-[var(--am-border)] md:grid-cols-3">
-                  {selectedProjects.map((project) => (
-                    <Link
-                      key={project.slug}
-                      href={project.link}
-                      target={project.link.startsWith("http") ? "_blank" : undefined}
-                      rel={project.link.startsWith("http") ? "noopener noreferrer" : undefined}
-                      className="group flex min-h-[180px] flex-col justify-between gap-6 bg-[var(--am-bg)] p-6 transition-colors hover:bg-[var(--am-bg-secondary)]"
-                    >
-                      <div className="space-y-2">
-                        <h3
-                          className={`${playfairDisplay.className} text-[21px] font-semibold leading-snug group-hover:text-[var(--am-accent)]`}
-                        >
-                          {project.title}
-                        </h3>
-                        <p className="text-[14px] leading-[1.6] text-[var(--am-text-secondary)]">
-                          {project.description}
-                        </p>
-                      </div>
-                      <span className="inline-flex items-center gap-1.5 text-[13px] text-[var(--am-accent)]">
-                        Visit
-                        <ArrowUpRight size={13} aria-hidden="true" />
-                      </span>
-                    </Link>
-                  ))}
+                  {selectedProjects.map((project) => {
+                    const cover = HOME_COVERS[project.slug];
+
+                    return (
+                      <Link
+                        key={project.slug}
+                        href={project.link}
+                        target={project.link.startsWith("http") ? "_blank" : undefined}
+                        rel={project.link.startsWith("http") ? "noopener noreferrer" : undefined}
+                        className="group flex flex-col bg-[var(--am-bg)] transition-colors hover:bg-[var(--am-bg-secondary)]"
+                      >
+                        {cover ? (
+                          <div className="overflow-hidden">
+                            <Image
+                              src={cover}
+                              alt=""
+                              width={960}
+                              height={640}
+                              className="aspect-[3/2] w-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-[1.02]"
+                              sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1056px) calc((100vw - 96px) / 3), 320px"
+                            />
+                          </div>
+                        ) : null}
+                        <div className="flex flex-1 flex-col justify-between gap-6 p-6">
+                          <div className="space-y-2">
+                            <h3
+                              className={`${playfairDisplay.className} text-[21px] font-semibold leading-snug group-hover:text-[var(--am-accent)]`}
+                            >
+                              {project.title}
+                            </h3>
+                            <p className="text-[14px] leading-[1.6] text-[var(--am-text-secondary)]">
+                              {project.description}
+                            </p>
+                          </div>
+                          <span className="inline-flex items-center gap-1.5 text-[13px] text-[var(--am-accent)]">
+                            Visit
+                            <ArrowUpRight size={13} aria-hidden="true" />
+                          </span>
+                        </div>
+                      </Link>
+                    );
+                  })}
                 </div>
 
                 <p className="mt-10 max-w-[640px] text-[15px] leading-[1.7] text-[var(--am-text-secondary)]">
