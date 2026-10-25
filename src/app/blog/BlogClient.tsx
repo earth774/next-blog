@@ -35,6 +35,8 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
   const activePage = Math.min(currentPage, totalPages);
   const pagePosts = indexPosts.slice((activePage - 1) * POSTS_PER_PAGE, activePage * POSTS_PER_PAGE);
   const [featuredPost, ...recentPosts] = activePage === 1 ? heroPosts : [];
+  // Reserve the thumbnail column only when this page has a cover, so text-only pages use the full width.
+  const pageHasCover = pagePosts.some((post) => post.image);
 
   const yearFilters = [{ value: "all", label: "All" }, ...availableYears.map((year) => ({ value: year, label: year }))];
 
@@ -204,7 +206,9 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
                   <li key={post.slug} className="border-b border-[var(--am-border)]">
                     <Link
                       href={`/blog/${post.slug}`}
-                      className="group grid gap-3 py-7 md:grid-cols-[136px_minmax(0,1fr)_168px] md:gap-8"
+                      className={`group grid gap-3 py-7 md:grid-cols-[136px_minmax(0,1fr)] md:gap-8 ${
+                        pageHasCover ? "lg:grid-cols-[136px_minmax(0,1fr)_168px]" : ""
+                      }`}
                     >
                       <div
                         className={`${jetbrainsMono.className} flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] uppercase tracking-[0.12em] text-[var(--am-text-muted)] md:flex-col md:items-start md:gap-y-1.5 md:pt-1.5`}
@@ -231,7 +235,7 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
                         </p>
                       </div>
                       {post.image ? (
-                        <div className="hidden overflow-hidden bg-[var(--am-bg-secondary)] md:block">
+                        <div className="hidden overflow-hidden bg-[var(--am-bg-secondary)] lg:block">
                           <Image
                             src={post.image}
                             alt=""
