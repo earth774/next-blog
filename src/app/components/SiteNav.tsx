@@ -36,6 +36,7 @@ export default function SiteNav() {
               src="https://webring.wonderful.software/webring.black.svg"
               sizes="32px"
               loading="lazy"
+              className="dark:invert"
             />
           </Link>
         </div>

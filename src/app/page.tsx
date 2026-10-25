@@ -8,8 +8,26 @@ import { jetbrainsMono, literata, playfairDisplay } from "@/lib/fonts";
 import { getAllPosts } from "@/lib/posts";
 import { getAllProjects } from "@/lib/projects";
 import { formatPostDate, getExcerpt, getReadingTime } from "@/lib/post-meta";
+import type { Post } from "@/lib/blog-utils";
 
 const TECH_STACK = ["TypeScript", "Go", "React", "PostgreSQL", "Docker"];
+
+function PostMeta({ post }: { post: Post }) {
+  return (
+    <p
+      className={`${jetbrainsMono.className} flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] uppercase tracking-[0.12em] text-[var(--am-text-muted)]`}
+    >
+      <time dateTime={post.date}>{formatPostDate(post.date)}</time>
+      <span aria-hidden="true">·</span>
+      <span>{getReadingTime(post.content)}</span>
+      {post.tags?.[0] ? (
+        <span className="ml-1 rounded-full bg-[var(--am-accent-soft)] px-2.5 py-[3px] normal-case tracking-normal text-[var(--am-accent)]">
+          {post.tags[0]}
+        </span>
+      ) : null}
+    </p>
+  );
+}
 
 // Add metadata for each blog post
 export async function generateMetadata(): Promise<Metadata> {
@@ -80,7 +98,7 @@ export default function Home() {
 
         <main className="flex-1">
           {/* Masthead */}
-          <section className="border-b border-[var(--am-border)] px-4 py-14 md:px-12 md:py-20">
+          <section className="border-b border-[var(--am-border)] px-4 py-16 md:px-12 md:py-28">
             <div className="mx-auto flex w-full max-w-[960px] flex-col gap-8 md:flex-row md:items-end md:justify-between">
               <div className="max-w-[640px]">
                 <p
@@ -89,19 +107,19 @@ export default function Home() {
                   Software Developer · Chiang Rai, Thailand
                 </p>
                 <h1
-                  className={`${playfairDisplay.className} mt-4 text-5xl font-bold leading-[1.05] md:text-[64px]`}
+                  className={`${playfairDisplay.className} mt-5 text-[56px] font-bold leading-none tracking-[-0.02em] md:text-[88px]`}
                 >
                   Earth
                 </h1>
-                <p className="mt-5 max-w-[540px] text-[17px] leading-[1.8] text-[var(--am-text-secondary)]">
+                <p className="mt-6 max-w-[540px] text-[17px] leading-[1.8] md:text-[19px] text-[var(--am-text-secondary)]">
                   I build thoughtful software and write about the craft of
                   programming. Currently exploring distributed systems and
                   frontend performance.
                 </p>
-                <div className="mt-7 flex flex-wrap items-center gap-3">
+                <div className="mt-9 flex flex-wrap items-center gap-3">
                   <Link
                     href="/blog"
-                    className="inline-flex items-center gap-2 bg-[var(--am-accent)] px-6 py-[11px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                    className="inline-flex items-center gap-2 bg-[var(--am-accent)] px-6 py-[11px] text-sm font-semibold text-[var(--am-bg)] transition-opacity hover:opacity-90"
                   >
                     Read Blog
                     <ArrowRight size={14} aria-hidden="true" />
@@ -144,9 +162,9 @@ export default function Home() {
 
           {/* Latest writing */}
           {featuredPost ? (
-            <section className="px-4 py-14 md:px-12" aria-labelledby="latest-writing">
+            <section className="px-4 py-16 md:px-12 md:py-24" aria-labelledby="latest-writing">
               <div className="mx-auto w-full max-w-[960px]">
-                <div className="flex items-end justify-between gap-4">
+                <div className="flex items-baseline justify-between gap-4">
                   <h2
                     id="latest-writing"
                     className={`${playfairDisplay.className} text-[28px] font-bold md:text-[32px]`}
@@ -162,13 +180,16 @@ export default function Home() {
                   </Link>
                 </div>
 
-                <article className="mt-8 border-b border-[var(--am-border)] pb-10">
-                  <Link href={`/blog/${featuredPost.slug}`} className="group block space-y-3">
-                    <p
-                      className={`${jetbrainsMono.className} text-[11px] uppercase tracking-[0.14em] text-[var(--am-accent)]`}
-                    >
-                      Latest · {formatPostDate(featuredPost.date)} · {getReadingTime(featuredPost.content)}
-                    </p>
+                <article className="mt-10 border-b border-[var(--am-border)] pb-12">
+                  <Link href={`/blog/${featuredPost.slug}`} className="group block space-y-4">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                      <span
+                        className={`${jetbrainsMono.className} text-[11px] uppercase tracking-[0.14em] text-[var(--am-accent)]`}
+                      >
+                        Featured
+                      </span>
+                      <PostMeta post={featuredPost} />
+                    </div>
                     {featuredPost.image ? (
                       <div className="overflow-hidden">
                         <Image
@@ -182,37 +203,36 @@ export default function Home() {
                       </div>
                     ) : null}
                     <h3
-                      className={`${playfairDisplay.className} max-w-[760px] text-[32px] font-bold leading-tight transition-colors group-hover:text-[var(--am-accent)] md:text-[40px]`}
+                      className={`${playfairDisplay.className} max-w-[800px] text-[32px] font-bold leading-[1.15] tracking-[-0.01em] transition-colors group-hover:text-[var(--am-accent)] md:text-[44px]`}
                     >
                       {featuredPost.title}
                     </h3>
-                    <p className="max-w-[720px] text-[16px] leading-[1.7] text-[var(--am-text-secondary)]">
+                    <p className="max-w-[720px] text-[17px] leading-[1.75] text-[var(--am-text-secondary)]">
                       {featuredPost.excerpt || getExcerpt(featuredPost.content, 220)}
                     </p>
+                    <span className="inline-flex items-center gap-1.5 pt-1 text-[14px] font-medium text-[var(--am-accent)]">
+                      Read article
+                      <ArrowRight
+                        size={14}
+                        aria-hidden="true"
+                        className="transition-transform group-hover:translate-x-0.5"
+                      />
+                    </span>
                   </Link>
                 </article>
 
                 <div>
                   {latestPosts.map((post) => (
                     <article key={post.slug} className="border-b border-[var(--am-border)] last:border-b-0">
-                      <Link
-                        href={`/blog/${post.slug}`}
-                        className="group flex items-baseline justify-between gap-6 py-5"
-                      >
-                        <div className="min-w-0 space-y-1">
-                          <h3
-                            className={`${playfairDisplay.className} text-[20px] font-semibold leading-snug transition-colors group-hover:text-[var(--am-accent)] md:text-[22px]`}
-                          >
-                            {post.title}
-                          </h3>
-                          <p className="line-clamp-2 text-[14px] leading-[1.6] text-[var(--am-text-secondary)]">
-                            {post.excerpt || getExcerpt(post.content)}
-                          </p>
-                        </div>
-                        <p
-                          className={`${jetbrainsMono.className} hidden shrink-0 text-[11px] text-[var(--am-text-muted)] sm:block`}
+                      <Link href={`/blog/${post.slug}`} className="group block space-y-2 py-7">
+                        <PostMeta post={post} />
+                        <h3
+                          className={`${playfairDisplay.className} max-w-[760px] text-[21px] font-semibold leading-snug transition-colors group-hover:text-[var(--am-accent)] md:text-[24px]`}
                         >
-                          {formatPostDate(post.date)}
+                          {post.title}
+                        </h3>
+                        <p className="line-clamp-2 max-w-[720px] text-[15px] leading-[1.65] text-[var(--am-text-secondary)]">
+                          {post.excerpt || getExcerpt(post.content)}
                         </p>
                       </Link>
                     </article>
@@ -225,11 +245,11 @@ export default function Home() {
           {/* Selected projects */}
           {selectedProjects.length > 0 ? (
             <section
-              className="border-t border-[var(--am-border)] bg-[var(--am-bg-secondary)]/40 px-4 py-14 md:px-12"
+              className="border-t border-[var(--am-border)] bg-[var(--am-bg-secondary)]/40 px-4 py-16 md:px-12 md:py-24"
               aria-labelledby="selected-projects"
             >
               <div className="mx-auto w-full max-w-[960px]">
-                <div className="flex items-end justify-between gap-4">
+                <div className="flex items-baseline justify-between gap-4">
                   <h2
                     id="selected-projects"
                     className={`${playfairDisplay.className} text-[28px] font-bold md:text-[32px]`}
@@ -245,7 +265,7 @@ export default function Home() {
                   </Link>
                 </div>
 
-                <div className="mt-8 grid gap-px border border-[var(--am-border)] bg-[var(--am-border)] md:grid-cols-3">
+                <div className="mt-10 grid gap-px border border-[var(--am-border)] bg-[var(--am-border)] md:grid-cols-3">
                   {selectedProjects.map((project) => (
                     <Link
                       key={project.slug}
@@ -276,9 +296,10 @@ export default function Home() {
                   More about me, my experience, and how to get in touch.{" "}
                   <Link
                     href="/about"
-                    className="text-[var(--am-accent)] underline-offset-4 hover:underline"
+                    className="inline-flex items-center gap-1 text-[var(--am-accent)] underline-offset-4 hover:underline"
                   >
-                    About Earth →
+                    About Earth
+                    <ArrowRight size={14} aria-hidden="true" />
                   </Link>
                 </p>
               </div>
