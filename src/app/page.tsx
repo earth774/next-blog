@@ -83,7 +83,7 @@ export const revalidate = 3600; // Revalidate every hour
 export default function Home() {
   const posts = getAllPosts();
   const [featuredPost, ...recentPosts] = posts;
-    const latestPosts = recentPosts.slice(0, 4);
+  const latestPosts = recentPosts.slice(0, 4);
   const selectedProjects = getAllProjects()
     .filter((project) => project.category === "project")
     .slice(0, 3);
