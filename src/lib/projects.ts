@@ -13,6 +13,7 @@ export interface Project {
   status: "active" | "closed" | "maintenance";
   icon: string;
   category: "project" | "npm" | "wordpress";
+  image?: string;
 }
 
 export function getAllProjects(): Project[] {
@@ -55,5 +56,6 @@ export function getProjectBySlug(slug: string): Project {
     status: data.status || "active", // default to active if not specified
     icon: data.icon || "🚀", // default to rocket emoji if not specified
     category: data.category || "project",
+    image: data.image,
   };
 }

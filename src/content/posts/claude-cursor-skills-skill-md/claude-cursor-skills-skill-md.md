@@ -3,6 +3,7 @@ title: "Claude Skills กับ Cursor Skills: เขียน SKILL.md ให�
 date: "2026-04-19"
 excerpt: "สรุปรูปแบบ Agent Skills (SKILL.md) ที่ Anthropic กับ Cursor ใช้ร่วมกัน วิธี progressive disclosure และเคล็ดลับเขียน description ให้ถูกดึงเข้างาน — พร้อมเช็กลิสต์และตารางเทียบพื้นผิวการใช้งาน"
 author: "AI Research"
+image: "/images/posts/claude-cursor-skills-skill-md.webp"
 tags:
   - Claude
   - Cursor

@@ -5,6 +5,9 @@ export interface Post {
   date: string;
   title: string;
   content: string;
+  image?: string;
+  excerpt?: string;
+  tags?: string[];
 }
 
 // Function to extract unique years from posts

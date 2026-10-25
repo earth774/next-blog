@@ -1,68 +1,15 @@
-import { getAllPosts, getPostBySlug } from "@/lib/posts";
+import { EXCERPT_LENGTH, getAllPosts, getPostBySlug } from "@/lib/posts";
+import { getExcerpt } from "@/lib/post-meta";
+import Image from "next/image";
 import Link from "next/link";
 import Markdown from "markdown-to-jsx";
-import { JetBrains_Mono, Literata, Playfair_Display } from "next/font/google";
-import BlogNav from "../BlogNav";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import SiteNav from "@/app/components/SiteNav";
+import SiteFooter from "@/app/components/SiteFooter";
+import PostMeta from "@/app/components/PostMeta";
+import { jetbrainsMono, literata, playfairDisplay } from "@/lib/fonts";
+import type { Post } from "@/lib/blog-utils";
 import styles from "./page.module.css";
-
-interface Post {
-  slug: string;
-  title: string;
-  content: string;
-  date: string;
-  image?: string;
-  excerpt?: string;
-}
-
-const NAV_LINKS = [
-  { href: "/blog", label: "Blog" },
-  { href: "/project", label: "Projects" },
-  { href: "/about", label: "About" },
-];
-
-const FOOTER_LINKS = [
-  { href: "/feed.xml", label: "RSS" },
-  { href: "https://x.com/SutthiponGEarth", label: "Twitter" },
-  { href: "https://github.com/amiearth", label: "GitHub" },
-];
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["600", "700"],
-  display: "swap",
-});
-
-const literata = Literata({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400"],
-  display: "swap",
-});
-
-function formatPostDate(dateValue: string) {
-  const parsedDate = new Date(dateValue);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return dateValue;
-  }
-
-  return parsedDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
-function getReadingTime(content: string) {
-  const plainText = content.replace(/[#*_`>\-\n]/g, " ").replace(/\s+/g, " ").trim();
-  const estimatedMinutes = Math.max(1, Math.round(plainText.length / 900));
-  return `${estimatedMinutes} min read`;
-}
 
 function getPrevAndNextPosts(posts: Post[], slug: string) {
   const currentIndex = posts.findIndex((post) => post.slug === slug);
@@ -157,9 +104,12 @@ export const revalidate = 3600; // Revalidate every hour
 const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const { slug } = await params;
   const post: Post | null = await getPostBySlug(slug);
-  const posts = getAllPosts() as Post[];
+  const posts = getAllPosts();
 
   const { previousPost, nextPost } = getPrevAndNextPosts(posts, slug);
+  // Only authored excerpts work as a dek; derived ones just repeat the opening paragraph.
+  const hasAuthoredExcerpt =
+    !!post?.excerpt && post.excerpt !== getExcerpt(post.content, EXCERPT_LENGTH);
 
   if (!post) {
     return (
@@ -167,12 +117,15 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
         className={`${literata.className} relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[var(--am-bg)] text-[var(--am-text-primary)]`}
       >
         <div className="flex min-h-screen w-full flex-col">
-          <BlogNav navLinks={NAV_LINKS} />
+          <SiteNav />
           <main className="mx-auto flex w-full max-w-[720px] flex-1 items-center justify-center px-4 py-20 md:px-12">
             <div className="text-center">
-              <h1
-                className={`${playfairDisplay.className} text-3xl font-bold text-[var(--am-text-primary)]`}
+              <p
+                className={`${jetbrainsMono.className} text-[11px] uppercase tracking-[0.16em] text-[var(--am-accent)]`}
               >
+                404
+              </p>
+              <h1 className={`${playfairDisplay.className} mt-3 text-[36px] font-bold`}>
                 Post not found
               </h1>
               <p className="mt-3 text-[15px] text-[var(--am-text-secondary)]">
@@ -180,13 +133,14 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
               </p>
               <Link
                 href="/blog"
-                className="mt-6 inline-flex items-center gap-1 text-[14px] text-[var(--am-text-muted)] transition-colors hover:text-[var(--am-text-primary)]"
+                className="mt-8 inline-flex items-center gap-2 border border-[var(--am-border)] px-5 py-2 text-[14px] text-[var(--am-accent)] transition-colors hover:bg-[var(--am-bg-secondary)]"
               >
-                <span aria-hidden="true">←</span>
+                <ArrowLeft size={14} aria-hidden="true" />
                 Back to blog
               </Link>
             </div>
           </main>
+          <SiteFooter />
         </div>
       </div>
     );
@@ -197,122 +151,127 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
       className={`${literata.className} relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[var(--am-bg)] text-[var(--am-text-primary)]`}
     >
       <div className="flex min-h-screen w-full flex-col">
-        <BlogNav navLinks={NAV_LINKS} />
+        <SiteNav />
 
-        <main className="flex-1 px-4 py-14 md:px-12">
+        <main className="flex-1 px-4 py-12 md:px-12 md:py-16">
           <article className="mx-auto w-full max-w-[720px]">
             <Link
               href="/blog"
-              className="mb-8 inline-flex items-center gap-1.5 text-[13px] text-[var(--am-text-muted)] transition-colors hover:text-[var(--am-text-primary)]"
+              className={`${jetbrainsMono.className} group inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.14em] text-[var(--am-text-muted)] transition-colors hover:text-[var(--am-accent)]`}
             >
-              <span aria-hidden="true">←</span>
-              All Posts
+              <ArrowLeft
+                size={13}
+                aria-hidden="true"
+                className="transition-transform group-hover:-translate-x-0.5"
+              />
+              All posts
             </Link>
 
-            <header className="space-y-4">
+            <header className="mt-8 space-y-5 border-b border-[var(--am-border)] pb-8">
+              <PostMeta post={post} />
               <h1
-                className={`${playfairDisplay.className} text-[34px] font-bold leading-[1.25] text-[var(--am-text-primary)] md:text-[40px]`}
+                className={`${playfairDisplay.className} text-[34px] font-bold leading-[1.15] tracking-[-0.01em] md:text-[48px]`}
               >
                 {post.title}
               </h1>
-
-              <div className="flex flex-wrap items-center gap-2 text-[13px] text-[var(--am-text-muted)]">
-                <time>{formatPostDate(post.date)}</time>
-                <span aria-hidden="true">·</span>
-                <span>{getReadingTime(post.content)}</span>
-                <span aria-hidden="true">·</span>
-                <span
-                  className={`${jetbrainsMono.className} rounded-full bg-[var(--am-accent-soft)] px-[10px] py-[3px] text-[11px] text-[var(--am-accent)]`}
-                >
-                  {new Date(post.date).getFullYear()}
+              {hasAuthoredExcerpt ? (
+                <p className="text-[18px] leading-[1.7] text-[var(--am-text-secondary)] md:text-[19px]">
+                  {post.excerpt}
+                </p>
+              ) : null}
+              <Link href="/about" className="group inline-flex items-center gap-3 pt-1">
+                <Image
+                  src="/profile.jpg"
+                  alt=""
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 rounded-full border border-[var(--am-border)] object-cover"
+                  sizes="40px"
+                />
+                <span className="flex flex-col">
+                  <span className="text-[14px] font-medium transition-colors group-hover:text-[var(--am-accent)]">
+                    Sutthiphong Nuanma
+                  </span>
+                  <span
+                    className={`${jetbrainsMono.className} text-[10px] uppercase tracking-[0.14em] text-[var(--am-text-muted)]`}
+                  >
+                    Software Developer
+                  </span>
                 </span>
-              </div>
+              </Link>
             </header>
 
-            <div className="mt-7 h-px w-full bg-[var(--am-border)]" />
+            {/* Skip derived images that the body already shows inline */}
+            {post.image && !post.content.includes(post.image) ? (
+              <Image
+                src={post.image}
+                alt=""
+                width={1200}
+                height={800}
+                priority
+                className="mt-10 aspect-[2/1] w-full object-cover"
+                sizes="(max-width: 767px) calc(100vw - 32px), 720px"
+              />
+            ) : null}
 
-            <div className={`${styles.content} mt-8`}>
+            <div
+              className={`${styles.content} ${playfairDisplay.variable} ${jetbrainsMono.variable} mt-10`}
+            >
               <Markdown>{post.content}</Markdown>
             </div>
 
-            <div className="mt-10 h-px w-full bg-[var(--am-border)]" />
-
             {(previousPost || nextPost) && (
               <nav
-                className="flex flex-col gap-8 py-8 text-[14px] md:flex-row md:items-start md:justify-between"
+                className="mt-14 grid gap-px border border-[var(--am-border)] bg-[var(--am-border)] sm:grid-cols-2"
                 aria-label="Post navigation"
               >
                 {previousPost ? (
                   <Link
                     href={`/blog/${previousPost.slug}`}
-                    className="group max-w-[280px] space-y-1"
+                    className="group flex flex-col gap-2 bg-[var(--am-bg)] p-6 transition-colors hover:bg-[var(--am-bg-secondary)]"
                   >
-                    <p className="text-[12px] text-[var(--am-text-muted)]">← Previous</p>
-                    <p className="text-[var(--am-text-primary)] transition-colors group-hover:text-[var(--am-accent)]">
+                    <span
+                      className={`${jetbrainsMono.className} inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.14em] text-[var(--am-text-muted)]`}
+                    >
+                      <ArrowLeft size={12} aria-hidden="true" />
+                      Previous
+                    </span>
+                    <span
+                      className={`${playfairDisplay.className} text-[18px] font-semibold leading-snug transition-colors group-hover:text-[var(--am-accent)]`}
+                    >
                       {previousPost.title}
-                    </p>
+                    </span>
                   </Link>
                 ) : (
-                  <div />
+                  <div className="hidden bg-[var(--am-bg)] sm:block" />
                 )}
 
                 {nextPost ? (
                   <Link
                     href={`/blog/${nextPost.slug}`}
-                    className="group max-w-[280px] space-y-1 md:text-right"
+                    className="group flex flex-col gap-2 bg-[var(--am-bg)] p-6 transition-colors hover:bg-[var(--am-bg-secondary)] sm:items-end sm:text-right"
                   >
-                    <p className="text-[12px] text-[var(--am-text-muted)]">Next →</p>
-                    <p className="text-[var(--am-text-primary)] transition-colors group-hover:text-[var(--am-accent)]">
+                    <span
+                      className={`${jetbrainsMono.className} inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.14em] text-[var(--am-text-muted)]`}
+                    >
+                      Next
+                      <ArrowRight size={12} aria-hidden="true" />
+                    </span>
+                    <span
+                      className={`${playfairDisplay.className} text-[18px] font-semibold leading-snug transition-colors group-hover:text-[var(--am-accent)]`}
+                    >
                       {nextPost.title}
-                    </p>
+                    </span>
                   </Link>
                 ) : (
-                  <div />
+                  <div className="hidden bg-[var(--am-bg)] sm:block" />
                 )}
               </nav>
             )}
           </article>
         </main>
 
-        <footer className="border-t border-[var(--am-border)]">
-          <div className="hidden h-16 w-full items-center justify-between px-12 md:flex">
-            <p className="text-[13px] text-[var(--am-text-muted)]">
-              © 2026 Earth. Made with care in Chiang Rai.
-            </p>
-            <div className="flex items-center gap-6 text-[13px] text-[var(--am-text-muted)]">
-              {FOOTER_LINKS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="transition-colors hover:text-[var(--am-text-secondary)]"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex w-full flex-col items-center gap-3 px-6 py-4 text-center md:hidden">
-            <p className="text-[13px] text-[var(--am-text-muted)]">
-              © 2026 Earth. Made with care in Chiang Rai.
-            </p>
-            <div className="flex items-center gap-5 text-[13px] text-[var(--am-text-muted)]">
-              {FOOTER_LINKS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                  className="transition-colors hover:text-[var(--am-text-secondary)]"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </footer>
+        <SiteFooter />
       </div>
 
       {/* Structured Data for Blog Post */}

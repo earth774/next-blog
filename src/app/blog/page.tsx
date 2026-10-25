@@ -1,32 +1,8 @@
 import { getAllPosts } from "@/lib/posts";
-import Link from "next/link";
-import { Literata, Playfair_Display } from "next/font/google";
+import { jetbrainsMono, literata, playfairDisplay } from "@/lib/fonts";
 import BlogClient from "./BlogClient";
-import BlogNav from "./BlogNav";
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["700"],
-  display: "swap",
-});
-
-const literata = Literata({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
-
-const NAV_LINKS = [
-  { href: "/blog", label: "Blog" },
-  { href: "/project", label: "Projects" },
-  { href: "/about", label: "About" },
-];
-
-const FOOTER_LINKS = [
-  { href: "/feed.xml", label: "RSS" },
-  { href: "https://x.com/SutthiponGEarth", label: "Twitter" },
-  { href: "https://github.com/amiearth", label: "GitHub" },
-];
+import SiteNav from "@/app/components/SiteNav";
+import SiteFooter from "@/app/components/SiteFooter";
 
 // Add metadata for each blog post
 export async function generateMetadata() {
@@ -76,69 +52,36 @@ export default function BlogIndex() {
       className={`${literata.className} relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[var(--am-bg)] text-[var(--am-text-primary)]`}
     >
       <div className="flex min-h-screen w-full flex-col">
-        <BlogNav navLinks={NAV_LINKS} />
+        <SiteNav />
 
-        <main className="flex-1 px-4 py-16 md:px-12">
-          <section className="mx-auto w-full max-w-[720px]">
-            <header className="space-y-2">
+        <main className="flex-1">
+          <header className="border-b border-[var(--am-border)] px-4 py-14 md:px-12 md:py-20">
+            <div className="mx-auto w-full max-w-[960px]">
+              <p
+                className={`${jetbrainsMono.className} text-[11px] uppercase tracking-[0.16em] text-[var(--am-accent)]`}
+              >
+                Blog · {posts.length} posts
+              </p>
               <h1
-                className={`${playfairDisplay.className} text-4xl font-bold text-[var(--am-text-primary)] md:text-[42px]`}
+                className={`${playfairDisplay.className} mt-3 text-[44px] font-bold leading-none tracking-[-0.02em] md:text-[64px]`}
               >
                 Writing
               </h1>
-              <p className="text-[16px] leading-[1.6] text-[var(--am-text-secondary)]">
+              <p className="mt-5 max-w-[560px] text-[17px] leading-[1.75] text-[var(--am-text-secondary)]">
                 Occasional thoughts on software, systems, and the quiet craft of
                 building things.
               </p>
-            </header>
+            </div>
+          </header>
 
-            <BlogClient initialPosts={posts} />
+          <section className="px-4 py-10 md:px-12 md:py-14">
+            <div className="mx-auto w-full max-w-[960px]">
+              <BlogClient initialPosts={posts} />
+            </div>
           </section>
         </main>
 
-        <footer className="border-t border-[var(--am-border)]">
-          <div className="hidden h-16 w-full items-center justify-between px-12 md:flex">
-            <p className="text-[13px] text-[var(--am-text-muted)]">
-              © 2026 Earth. Made with care in Chiang Rai.
-            </p>
-            <div className="flex items-center gap-6 text-[13px] text-[var(--am-text-muted)]">
-              {FOOTER_LINKS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    item.href.startsWith("http") ? "noopener noreferrer" : undefined
-                  }
-                  className="transition-colors hover:text-[var(--am-text-secondary)]"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex w-full flex-col items-center gap-3 px-6 py-4 text-center md:hidden">
-            <p className="text-[13px] text-[var(--am-text-muted)]">
-              © 2026 Earth. Made with care in Chiang Rai.
-            </p>
-            <div className="flex items-center gap-5 text-[13px] text-[var(--am-text-muted)]">
-              {FOOTER_LINKS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    item.href.startsWith("http") ? "noopener noreferrer" : undefined
-                  }
-                  className="transition-colors hover:text-[var(--am-text-secondary)]"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </footer>
+        <SiteFooter />
       </div>
 
       {/* Structured Data for Blog */}

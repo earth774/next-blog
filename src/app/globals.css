@@ -43,15 +43,23 @@
   --am-bg: #f7f5f0;
   --am-bg-secondary: #edeae3;
   --am-border: #e2ddd7;
-  --am-text-muted: #a09a94;
+  --am-text-muted: #7d766f;
   --am-text-primary: #1a1714;
   --am-text-secondary: #6b6560;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #141210;
+    --foreground: #ece7df;
+    --am-accent: #a8c686;
+    --am-accent-soft: #26331f;
+    --am-bg: #141210;
+    --am-bg-secondary: #1e1a17;
+    --am-border: #332d28;
+    --am-text-muted: #9a9189;
+    --am-text-primary: #ece7df;
+    --am-text-secondary: #b3aaa2;
   }
 }
 

@@ -5,4 +5,5 @@ date: "2025-12-03"
 status: "active"
 icon: "🎨"
 category: "project"
+image: "/images/projects/excaflow.webp"
 ---

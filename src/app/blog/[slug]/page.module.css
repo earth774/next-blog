@@ -7,7 +7,7 @@
 .content > p:first-of-type::first-letter {
   float: left;
   margin-right: 0.1em;
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-playfair), serif;
   font-size: 3.5em;
   line-height: 0.85;
   font-weight: 700;
@@ -23,13 +23,13 @@
 }
 
 .content h1 {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-playfair), serif;
   font-size: clamp(1.85rem, 1.45rem + 1vw, 2.2rem);
   font-weight: 700;
 }
 
 .content h2 {
-  font-family: "Playfair Display", serif;
+  font-family: var(--font-playfair), serif;
   font-size: clamp(1.5rem, 1.2rem + 0.7vw, 1.65rem);
   font-weight: 600;
 }
@@ -83,7 +83,7 @@
   border-radius: 6px;
   background: var(--am-bg-secondary);
   padding: 0.08rem 0.34rem;
-  font-family: "JetBrains Mono", monospace;
+  font-family: var(--font-jetbrains-mono), monospace;
   font-size: 0.84em;
 }
 
@@ -115,7 +115,9 @@
 }
 
 .content table {
-  width: 100%;
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
   border-collapse: collapse;
 }
 
