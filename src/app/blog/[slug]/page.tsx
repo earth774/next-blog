@@ -1,4 +1,5 @@
-import { getAllPosts, getPostBySlug } from "@/lib/posts";
+import { EXCERPT_LENGTH, getAllPosts, getPostBySlug } from "@/lib/posts";
+import { getExcerpt } from "@/lib/post-meta";
 import Image from "next/image";
 import Link from "next/link";
 import Markdown from "markdown-to-jsx";
@@ -106,6 +107,9 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
   const posts = getAllPosts();
 
   const { previousPost, nextPost } = getPrevAndNextPosts(posts, slug);
+  // Only authored excerpts work as a dek; derived ones just repeat the opening paragraph.
+  const hasAuthoredExcerpt =
+    !!post?.excerpt && post.excerpt !== getExcerpt(post.content, EXCERPT_LENGTH);
 
   if (!post) {
     return (
@@ -170,7 +174,7 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
               >
                 {post.title}
               </h1>
-              {post.excerpt ? (
+              {hasAuthoredExcerpt ? (
                 <p className="text-[18px] leading-[1.7] text-[var(--am-text-secondary)] md:text-[19px]">
                   {post.excerpt}
                 </p>

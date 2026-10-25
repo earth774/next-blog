@@ -1,6 +1,10 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { getExcerpt } from "./post-meta";
+
+// Derived excerpts use this length; detail pages rely on it to tell them apart from authored ones.
+export const EXCERPT_LENGTH = 150;
 
 const postsDirectory = path.join(process.cwd(), "src/content/posts");
 
@@ -49,8 +53,7 @@ export function getPostBySlug(slug: string): Post | null {
     const { data, content } = matter(fileContents);
 
     // Generate excerpt from content if not provided
-    const excerpt =
-      data.excerpt || content.slice(0, 150).replace(/[#*`]/g, "") + "...";
+    const excerpt = data.excerpt || getExcerpt(content, EXCERPT_LENGTH);
 
     // Find the actual image file in the post directory
     const image = data.image || findPostImage(slug);

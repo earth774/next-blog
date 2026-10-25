@@ -14,6 +14,11 @@ export function getReadingTime(content: string) {
 }
 
 export function getExcerpt(content: string, maxLength = 130) {
-  const plainText = content.replace(/[#*_`>\-\n]/g, " ").replace(/\s+/g, " ").trim();
+  const plainText = content
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ") // drop images
+    .replace(/\[([^\]]*)\]\([^)]*\)/g, "$1") // keep link text only
+    .replace(/[#*_`>\-\n]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
   return plainText.length <= maxLength ? plainText : `${plainText.slice(0, maxLength).trim()}...`;
 }
