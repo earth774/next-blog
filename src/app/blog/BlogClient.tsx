@@ -3,33 +3,17 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { ArrowRight, Search } from "lucide-react";
+import PostMeta from "@/app/components/PostMeta";
 import { jetbrainsMono, playfairDisplay } from "@/lib/fonts";
 import { getUniqueYears, searchAndFilterPosts, type Post } from "@/lib/blog-utils";
-import { formatPostDate, getExcerpt, getReadingTime } from "@/lib/post-meta";
+import { getExcerpt } from "@/lib/post-meta";
 
 interface BlogClientProps {
   initialPosts: Post[];
 }
 
 const POSTS_PER_PAGE = 6;
-
-function PostMeta({ post }: { post: Post }) {
-  return (
-    <div className="flex flex-wrap items-center gap-3 text-[12px] text-[var(--am-text-muted)]">
-      <span>{formatPostDate(post.date)}</span>
-      <span aria-hidden="true">·</span>
-      <span>{getReadingTime(post.content)}</span>
-      {post.tags?.[0] ? (
-        <span
-          className={`${jetbrainsMono.className} rounded-full bg-[var(--am-accent-soft)] px-[10px] py-[3px] text-[11px] text-[var(--am-accent)]`}
-        >
-          {post.tags[0]}
-        </span>
-      ) : null}
-    </div>
-  );
-}
 
 export default function BlogClient({ initialPosts }: BlogClientProps) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,63 +35,46 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
   const featuredPost = isDefaultView ? paginatedPosts[0] : undefined;
   const listPosts = featuredPost ? paginatedPosts.slice(1) : paginatedPosts;
 
+  const yearFilters = [{ value: "all", label: "All" }, ...availableYears.map((year) => ({ value: year, label: year }))];
+
   return (
-    <div className="mt-7 w-full">
-      <div className="flex flex-col gap-4 border-b border-[var(--am-border)] pb-5 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-wrap items-center gap-7">
-          <button
-            type="button"
-            onClick={() => {
-              setSelectedYear("all");
-              setCurrentPage(1);
-            }}
-            className="group inline-flex flex-col items-center gap-1 text-[14px]"
-          >
-            <span
-              className={`transition-colors ${
-                selectedYear === "all"
-                  ? "font-semibold text-[var(--am-text-primary)]"
-                  : "text-[var(--am-text-muted)] group-hover:text-[var(--am-text-secondary)]"
-              }`}
-            >
-              All
-            </span>
-            <span
-              className={`h-px w-5 bg-[var(--am-accent)] transition-opacity ${
-                selectedYear === "all" ? "opacity-100" : "opacity-0"
-              }`}
-            />
-          </button>
-          {availableYears.map((year) => (
-            <button
-              key={year}
-              type="button"
-              onClick={() => {
-                setSelectedYear(year);
-                setCurrentPage(1);
-              }}
-              className={`text-[14px] transition-colors ${
-                selectedYear === year
-                  ? "font-semibold text-[var(--am-text-primary)]"
-                  : "text-[var(--am-text-muted)] hover:text-[var(--am-text-secondary)]"
-              }`}
-            >
-              {year}
-            </button>
-          ))}
+    <div className="w-full">
+      <div className="flex flex-col gap-5 border-b border-[var(--am-border)] pb-4 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2" role="group" aria-label="Filter by year">
+          {yearFilters.map(({ value, label }) => {
+            const isActive = selectedYear === value;
+            return (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => {
+                  setSelectedYear(value);
+                  setCurrentPage(1);
+                }}
+                className={`${jetbrainsMono.className} border-b py-1 text-[12px] uppercase tracking-[0.12em] transition-colors ${
+                  isActive
+                    ? "border-[var(--am-accent)] text-[var(--am-text-primary)]"
+                    : "border-transparent text-[var(--am-text-muted)] hover:text-[var(--am-text-secondary)]"
+                }`}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
 
-        <label className="flex w-full max-w-[220px] items-center gap-2 border-b border-[var(--am-border)] py-1 text-[14px] text-[var(--am-text-muted)]">
+        <label className="flex w-full items-center gap-2 border-b border-[var(--am-border)] py-1.5 text-[14px] text-[var(--am-text-muted)] focus-within:border-[var(--am-accent)] md:max-w-[240px]">
           <Search size={15} aria-hidden="true" />
           <input
-            type="text"
+            type="search"
             value={searchQuery}
             onChange={(event) => {
               setSearchQuery(event.target.value);
               setCurrentPage(1);
             }}
             placeholder="Search posts..."
-            className="w-full bg-transparent text-[var(--am-text-secondary)] outline-none placeholder:text-[var(--am-text-muted)]"
+            className="w-full bg-transparent text-[var(--am-text-primary)] outline-none placeholder:text-[var(--am-text-muted)]"
             aria-label="Search posts"
           />
         </label>
@@ -116,120 +83,137 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
       {filteredPosts.length > 0 ? (
         <div>
           {featuredPost ? (
-            <article className="border-b border-[var(--am-border)] py-8">
-              <Link href={`/blog/${featuredPost.slug}`} className="group block space-y-3">
-                <p
-                  className={`${jetbrainsMono.className} text-[11px] uppercase tracking-[0.14em] text-[var(--am-accent)]`}
-                >
-                  Latest
-                </p>
+            <article className="border-b border-[var(--am-border)] py-10">
+              <Link href={`/blog/${featuredPost.slug}`} className="group block space-y-4">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <span
+                    className={`${jetbrainsMono.className} text-[11px] uppercase tracking-[0.14em] text-[var(--am-accent)]`}
+                  >
+                    Latest
+                  </span>
+                  <PostMeta post={featuredPost} />
+                </div>
                 {featuredPost.image ? (
                   <div className="overflow-hidden">
                     <Image
                       src={featuredPost.image}
                       alt=""
                       width={1200}
-                      height={630}
-                      className="aspect-[2/1] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                      sizes="(max-width: 768px) 100vw, 720px"
+                      height={800}
+                      priority
+                      className="aspect-[2/1] w-full object-cover transition-transform duration-300 motion-safe:group-hover:scale-[1.02]"
+                      sizes="(max-width: 767px) calc(100vw - 32px), (max-width: 1056px) calc(100vw - 96px), 960px"
                     />
                   </div>
                 ) : null}
                 <h2
-                  className={`${playfairDisplay.className} text-[32px] font-bold leading-tight text-[var(--am-text-primary)] transition-colors group-hover:text-[var(--am-accent)] md:text-[38px]`}
+                  className={`${playfairDisplay.className} max-w-[800px] text-[32px] font-bold leading-[1.15] tracking-[-0.01em] transition-colors group-hover:text-[var(--am-accent)] md:text-[44px]`}
                 >
                   {featuredPost.title}
                 </h2>
-                <p className="text-[16px] leading-[1.7] text-[var(--am-text-secondary)]">
+                <p className="max-w-[720px] text-[17px] leading-[1.75] text-[var(--am-text-secondary)]">
                   {featuredPost.excerpt || getExcerpt(featuredPost.content, 220)}
                 </p>
-                <PostMeta post={featuredPost} />
+                <span className="inline-flex items-center gap-1.5 pt-1 text-[14px] font-medium text-[var(--am-accent)]">
+                  Read article
+                  <ArrowRight
+                    size={14}
+                    aria-hidden="true"
+                    className="transition-transform group-hover:translate-x-0.5"
+                  />
+                </span>
               </Link>
             </article>
           ) : null}
 
           {listPosts.map((post) => (
-            <article key={post.slug} className="border-b border-[var(--am-border)] py-7">
-              <Link href={`/blog/${post.slug}`} className="group flex items-start justify-between gap-6">
-                <div className="min-w-0 space-y-2">
+            <article key={post.slug} className="border-b border-[var(--am-border)]">
+              <Link href={`/blog/${post.slug}`} className="group flex items-start justify-between gap-8 py-7">
+                <div className="min-w-0 max-w-[720px] space-y-2">
                   <PostMeta post={post} />
                   <h2
-                    className={`${playfairDisplay.className} text-[26px] font-bold leading-tight text-[var(--am-text-primary)] transition-colors group-hover:text-[var(--am-accent)] md:text-[30px]`}
+                    className={`${playfairDisplay.className} text-[21px] font-semibold leading-snug transition-colors group-hover:text-[var(--am-accent)] md:text-[24px]`}
                   >
                     {post.title}
                   </h2>
-                  <p className="text-[15px] leading-[1.6] text-[var(--am-text-secondary)]">
+                  <p className="line-clamp-2 text-[15px] leading-[1.65] text-[var(--am-text-secondary)]">
                     {post.excerpt || getExcerpt(post.content)}
                   </p>
                 </div>
                 {post.image ? (
-                  <Image
-                    src={post.image}
-                    alt=""
-                    width={192}
-                    height={128}
-                    className="hidden h-24 w-36 shrink-0 object-cover sm:block"
-                    sizes="144px"
-                    loading="lazy"
-                  />
+                  <div className="hidden shrink-0 overflow-hidden sm:block">
+                    <Image
+                      src={post.image}
+                      alt=""
+                      width={320}
+                      height={213}
+                      className="aspect-[3/2] w-40 object-cover transition-transform duration-300 motion-safe:group-hover:scale-[1.03] md:w-48"
+                      sizes="192px"
+                    />
+                  </div>
                 ) : null}
               </Link>
             </article>
           ))}
 
-          <nav
-            className="flex flex-wrap items-center justify-between gap-3 py-6"
-            aria-label="Blog pagination"
-          >
-            <button
-              type="button"
-              onClick={() => setCurrentPage((previousPage) => Math.max(1, previousPage - 1))}
-              disabled={activePage === 1}
-              className="rounded border border-[var(--am-border)] px-3 py-1.5 text-[13px] text-[var(--am-text-secondary)] transition-colors hover:text-[var(--am-text-primary)] disabled:cursor-not-allowed disabled:opacity-40"
+          {totalPages > 1 ? (
+            <nav
+              className="flex flex-wrap items-center justify-between gap-3 pt-8"
+              aria-label="Blog pagination"
             >
-              Previous
-            </button>
+              <button
+                type="button"
+                onClick={() => setCurrentPage(Math.max(1, activePage - 1))}
+                disabled={activePage === 1}
+                className="border border-[var(--am-border)] px-4 py-2 text-[13px] text-[var(--am-text-secondary)] transition-colors hover:bg-[var(--am-bg-secondary)] hover:text-[var(--am-text-primary)] disabled:pointer-events-none disabled:opacity-40"
+              >
+                Previous
+              </button>
 
-            <div className="flex items-center gap-2">
-              {Array.from({ length: totalPages }, (_, index) => {
-                const pageNumber = index + 1;
-                const isActivePage = pageNumber === activePage;
+              <div className={`${jetbrainsMono.className} flex flex-wrap items-center gap-1`}>
+                {Array.from({ length: totalPages }, (_, index) => {
+                  const pageNumber = index + 1;
+                  const isActivePage = pageNumber === activePage;
 
-                return (
-                  <button
-                    key={pageNumber}
-                    type="button"
-                    onClick={() => setCurrentPage(pageNumber)}
-                    className={`h-8 min-w-8 rounded border px-2 text-[13px] transition-colors ${
-                      isActivePage
-                        ? "border-[var(--am-accent)] bg-[var(--am-accent-soft)] text-[var(--am-accent)]"
-                        : "border-[var(--am-border)] text-[var(--am-text-secondary)] hover:text-[var(--am-text-primary)]"
-                    }`}
-                    aria-current={isActivePage ? "page" : undefined}
-                    aria-label={`Go to page ${pageNumber}`}
-                  >
-                    {pageNumber}
-                  </button>
-                );
-              })}
-            </div>
+                  return (
+                    <button
+                      key={pageNumber}
+                      type="button"
+                      onClick={() => setCurrentPage(pageNumber)}
+                      className={`h-9 min-w-9 px-2 text-[12px] transition-colors ${
+                        isActivePage
+                          ? "bg-[var(--am-accent)] text-[var(--am-bg)]"
+                          : "text-[var(--am-text-secondary)] hover:bg-[var(--am-bg-secondary)] hover:text-[var(--am-text-primary)]"
+                      }`}
+                      aria-current={isActivePage ? "page" : undefined}
+                      aria-label={`Go to page ${pageNumber}`}
+                    >
+                      {pageNumber}
+                    </button>
+                  );
+                })}
+              </div>
 
-            <button
-              type="button"
-              onClick={() =>
-                setCurrentPage((previousPage) => Math.min(totalPages, previousPage + 1))
-              }
-              disabled={activePage === totalPages}
-              className="rounded border border-[var(--am-border)] px-3 py-1.5 text-[13px] text-[var(--am-text-secondary)] transition-colors hover:text-[var(--am-text-primary)] disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              Next
-            </button>
-          </nav>
+              <button
+                type="button"
+                onClick={() => setCurrentPage(Math.min(totalPages, activePage + 1))}
+                disabled={activePage === totalPages}
+                className="border border-[var(--am-border)] px-4 py-2 text-[13px] text-[var(--am-text-secondary)] transition-colors hover:bg-[var(--am-bg-secondary)] hover:text-[var(--am-text-primary)] disabled:pointer-events-none disabled:opacity-40"
+              >
+                Next
+              </button>
+            </nav>
+          ) : null}
         </div>
       ) : (
-        <div className="py-14 text-center">
-          <p className="text-[15px] text-[var(--am-text-secondary)]">
-            No posts match this filter.
+        <div className="py-20 text-center">
+          <p className={`${playfairDisplay.className} text-[24px] font-semibold`}>
+            Nothing here yet
+          </p>
+          <p className="mt-2 text-[15px] text-[var(--am-text-secondary)]">
+            {searchQuery.trim()
+              ? `No posts match “${searchQuery.trim()}”${selectedYear === "all" ? "" : ` in ${selectedYear}`}.`
+              : "No posts match this filter."}
           </p>
           <button
             type="button"
@@ -238,7 +222,7 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
               setSelectedYear("all");
               setCurrentPage(1);
             }}
-            className="mt-3 text-[14px] text-[var(--am-accent)] transition-colors hover:opacity-80"
+            className="mt-6 border border-[var(--am-border)] px-5 py-2 text-[14px] text-[var(--am-accent)] transition-colors hover:bg-[var(--am-bg-secondary)]"
           >
             Clear filters
           </button>

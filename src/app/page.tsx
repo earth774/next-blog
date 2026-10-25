@@ -4,29 +4,13 @@ import { ArrowRight, ArrowUpRight, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 import SiteNav from "@/app/components/SiteNav";
 import SiteFooter from "@/app/components/SiteFooter";
+import PostMeta from "@/app/components/PostMeta";
 import { jetbrainsMono, literata, playfairDisplay } from "@/lib/fonts";
 import { getAllPosts } from "@/lib/posts";
 import { getAllProjects } from "@/lib/projects";
-import { formatPostDate, getExcerpt, getReadingTime } from "@/lib/post-meta";
-import type { Post } from "@/lib/blog-utils";
+import { getExcerpt } from "@/lib/post-meta";
 
 const TECH_STACK = ["TypeScript", "Go", "React", "PostgreSQL", "Docker"];
-function PostMeta({ post }: { post: Post }) {
-  return (
-    <p
-      className={`${jetbrainsMono.className} flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] uppercase tracking-[0.12em] text-[var(--am-text-muted)]`}
-    >
-      <time dateTime={post.date}>{formatPostDate(post.date)}</time>
-      <span aria-hidden="true">·</span>
-      <span>{getReadingTime(post.content)}</span>
-      {post.tags?.[0] ? (
-        <span className="ml-1 rounded-full bg-[var(--am-accent-soft)] px-2.5 py-[3px] normal-case tracking-normal text-[var(--am-accent)]">
-          {post.tags[0]}
-        </span>
-      ) : null}
-    </p>
-  );
-}
 
 // Add metadata for each blog post
 export async function generateMetadata(): Promise<Metadata> {
