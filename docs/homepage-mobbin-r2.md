@@ -17,10 +17,10 @@ All four images were created with built-in Codex image generation, then converte
 
 | Asset | Dimensions | Bytes |
 | --- | --- | ---: |
-| `public/images/home/agent-skills-cover.webp` | 1200 × 800 | 61,572 |
-| `public/images/home/excaflow-cover.webp` | 960 × 640 | 60,026 |
-| `public/images/home/lamoon-cover.webp` | 960 × 640 | 50,058 |
-| `public/images/home/color-picker-cover.webp` | 960 × 640 | 57,726 |
+| `public/images/posts/claude-cursor-skills-skill-md.webp` | 1200 × 800 | 61,572 |
+| `public/images/projects/excaflow.webp` | 960 × 640 | 60,026 |
+| `public/images/projects/lamoon.webp` | 960 × 640 | 50,058 |
+| `public/images/projects/color-picker.webp` | 960 × 640 | 57,726 |
 
 Images use `next/image`, explicit dimensions, responsive `sizes`, and empty alt text because they are decorative within links already named by their headings. The existing avatar has a descriptive name. New hover scaling respects reduced motion.
 

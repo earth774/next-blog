@@ -11,13 +11,6 @@ import { formatPostDate, getExcerpt, getReadingTime } from "@/lib/post-meta";
 import type { Post } from "@/lib/blog-utils";
 
 const TECH_STACK = ["TypeScript", "Go", "React", "PostgreSQL", "Docker"];
-const HOME_COVERS: Record<string, string | undefined> = {
-  "claude-cursor-skills-skill-md": "/images/home/agent-skills-cover.webp",
-  excaflow: "/images/home/excaflow-cover.webp",
-  lamoon: "/images/home/lamoon-cover.webp",
-  "color-picker": "/images/home/color-picker-cover.webp",
-};
-
 function PostMeta({ post }: { post: Post }) {
   return (
     <p
@@ -90,8 +83,7 @@ export const revalidate = 3600; // Revalidate every hour
 export default function Home() {
   const posts = getAllPosts();
   const [featuredPost, ...recentPosts] = posts;
-  const featuredImage = featuredPost?.image || HOME_COVERS[featuredPost?.slug ?? ""];
-  const latestPosts = recentPosts.slice(0, 4);
+    const latestPosts = recentPosts.slice(0, 4);
   const selectedProjects = getAllProjects()
     .filter((project) => project.category === "project")
     .slice(0, 3);
@@ -200,10 +192,10 @@ export default function Home() {
                       </span>
                       <PostMeta post={featuredPost} />
                     </div>
-                    {featuredImage ? (
+                    {featuredPost.image ? (
                       <div className="overflow-hidden">
                         <Image
-                          src={featuredImage}
+                          src={featuredPost.image}
                           alt=""
                           width={1200}
                           height={800}
@@ -277,8 +269,6 @@ export default function Home() {
 
                 <div className="mt-10 grid gap-px border border-[var(--am-border)] bg-[var(--am-border)] md:grid-cols-3">
                   {selectedProjects.map((project) => {
-                    const cover = HOME_COVERS[project.slug];
-
                     return (
                       <Link
                         key={project.slug}
@@ -287,10 +277,10 @@ export default function Home() {
                         rel={project.link.startsWith("http") ? "noopener noreferrer" : undefined}
                         className="group flex flex-col bg-[var(--am-bg)] transition-colors hover:bg-[var(--am-bg-secondary)]"
                       >
-                        {cover ? (
+                        {project.image ? (
                           <div className="overflow-hidden">
                             <Image
-                              src={cover}
+                              src={project.image}
                               alt=""
                               width={960}
                               height={640}

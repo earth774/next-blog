@@ -1,4 +1,5 @@
 import { getAllPosts, getPostBySlug } from "@/lib/posts";
+import Image from "next/image";
 import Link from "next/link";
 import Markdown from "markdown-to-jsx";
 import { JetBrains_Mono, Literata, Playfair_Display } from "next/font/google";
@@ -222,6 +223,19 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
                 </span>
               </div>
             </header>
+
+            {/* Skip derived images that the body already shows inline */}
+            {post.image && !post.content.includes(post.image) ? (
+              <Image
+                src={post.image}
+                alt=""
+                width={1200}
+                height={800}
+                priority
+                className="mt-8 aspect-[3/2] w-full object-cover"
+                sizes="(max-width: 767px) calc(100vw - 32px), 720px"
+              />
+            ) : null}
 
             <div className="mt-7 h-px w-full bg-[var(--am-border)]" />
 

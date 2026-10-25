@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import { Literata, Playfair_Display } from "next/font/google";
@@ -159,6 +160,16 @@ export default async function ProjectsPage({
                       className="border-b border-[var(--am-border)] py-9"
                     >
                       <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between md:gap-12">
+                        {project.image ? (
+                          <Image
+                            src={project.image}
+                            alt=""
+                            width={960}
+                            height={640}
+                            className="aspect-[3/2] w-full shrink-0 object-cover md:w-48"
+                            sizes="(max-width: 767px) calc(100vw - 32px), 192px"
+                          />
+                        ) : null}
                         <div className="min-w-0 flex-1 space-y-3">
                           <h2
                             className={`${playfairDisplay.className} text-[28px] leading-tight text-[var(--am-text-primary)] md:text-[32px]`}
