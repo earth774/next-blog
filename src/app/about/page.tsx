@@ -2,7 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
 import { Literata, Playfair_Display } from "next/font/google";
-import BlogNav from "@/app/blog/BlogNav";
+import SiteNav from "@/app/components/SiteNav";
 
 const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
@@ -15,12 +15,6 @@ const literata = Literata({
   weight: ["400", "500", "600"],
   display: "swap",
 });
-
-const NAV_LINKS = [
-  { href: "/blog", label: "Blog" },
-  { href: "/project", label: "Projects" },
-  { href: "/about", label: "About" },
-];
 
 const FOOTER_LINKS = [
   { href: "/feed.xml", label: "RSS" },
@@ -117,7 +111,7 @@ export default async function About() {
       className={`${literata.className} relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[var(--am-bg)] text-[var(--am-text-primary)]`}
     >
       <div className="flex min-h-screen w-full flex-col">
-        <BlogNav navLinks={NAV_LINKS} />
+        <SiteNav />
 
         <main className="flex-1 px-4 py-16 md:px-12">
           <section className="mx-auto w-full max-w-[720px] space-y-8">

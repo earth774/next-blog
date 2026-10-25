@@ -11,6 +11,7 @@ interface Post {
   content: string;
   image?: string;
   excerpt?: string;
+  tags?: string[];
 }
 
 // Function to find the first image file in a post directory
@@ -61,6 +62,7 @@ export function getPostBySlug(slug: string): Post | null {
       content,
       image,
       excerpt,
+      tags: Array.isArray(data.tags) ? data.tags : [],
     };
   } catch (error) {
     console.error(`Error reading file at ${fullPath}:`, error); // Debugging

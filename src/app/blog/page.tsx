@@ -1,32 +1,8 @@
 import { getAllPosts } from "@/lib/posts";
-import Link from "next/link";
-import { Literata, Playfair_Display } from "next/font/google";
+import { literata, playfairDisplay } from "@/lib/fonts";
 import BlogClient from "./BlogClient";
-import BlogNav from "./BlogNav";
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["700"],
-  display: "swap",
-});
-
-const literata = Literata({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
-
-const NAV_LINKS = [
-  { href: "/blog", label: "Blog" },
-  { href: "/project", label: "Projects" },
-  { href: "/about", label: "About" },
-];
-
-const FOOTER_LINKS = [
-  { href: "/feed.xml", label: "RSS" },
-  { href: "https://x.com/SutthiponGEarth", label: "Twitter" },
-  { href: "https://github.com/amiearth", label: "GitHub" },
-];
+import SiteNav from "@/app/components/SiteNav";
+import SiteFooter from "@/app/components/SiteFooter";
 
 // Add metadata for each blog post
 export async function generateMetadata() {
@@ -76,7 +52,7 @@ export default function BlogIndex() {
       className={`${literata.className} relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[var(--am-bg)] text-[var(--am-text-primary)]`}
     >
       <div className="flex min-h-screen w-full flex-col">
-        <BlogNav navLinks={NAV_LINKS} />
+        <SiteNav />
 
         <main className="flex-1 px-4 py-16 md:px-12">
           <section className="mx-auto w-full max-w-[720px]">
@@ -96,49 +72,7 @@ export default function BlogIndex() {
           </section>
         </main>
 
-        <footer className="border-t border-[var(--am-border)]">
-          <div className="hidden h-16 w-full items-center justify-between px-12 md:flex">
-            <p className="text-[13px] text-[var(--am-text-muted)]">
-              © 2026 Earth. Made with care in Chiang Rai.
-            </p>
-            <div className="flex items-center gap-6 text-[13px] text-[var(--am-text-muted)]">
-              {FOOTER_LINKS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    item.href.startsWith("http") ? "noopener noreferrer" : undefined
-                  }
-                  className="transition-colors hover:text-[var(--am-text-secondary)]"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex w-full flex-col items-center gap-3 px-6 py-4 text-center md:hidden">
-            <p className="text-[13px] text-[var(--am-text-muted)]">
-              © 2026 Earth. Made with care in Chiang Rai.
-            </p>
-            <div className="flex items-center gap-5 text-[13px] text-[var(--am-text-muted)]">
-              {FOOTER_LINKS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    item.href.startsWith("http") ? "noopener noreferrer" : undefined
-                  }
-                  className="transition-colors hover:text-[var(--am-text-secondary)]"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </footer>
+        <SiteFooter />
       </div>
 
       {/* Structured Data for Blog */}

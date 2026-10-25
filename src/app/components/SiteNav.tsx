@@ -3,25 +3,18 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Playfair_Display } from "next/font/google";
+import { usePathname } from "next/navigation";
+import { playfairDisplay } from "@/lib/fonts";
 
-interface NavLinkItem {
-  href: string;
-  label: string;
-}
+export const NAV_LINKS = [
+  { href: "/blog", label: "Blog" },
+  { href: "/project", label: "Projects" },
+  { href: "/about", label: "About" },
+];
 
-interface BlogNavProps {
-  navLinks: NavLinkItem[];
-}
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["700"],
-  display: "swap",
-});
-
-export default function BlogNav({ navLinks }: BlogNavProps) {
+export default function SiteNav() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
     <nav className="relative h-16 border-b border-[var(--am-border)]">
@@ -47,16 +40,24 @@ export default function BlogNav({ navLinks }: BlogNavProps) {
           </Link>
         </div>
 
-        <div className="hidden items-center gap-9 text-[15px] text-[var(--am-text-secondary)] md:flex">
-          {navLinks.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="transition-colors hover:text-[var(--am-text-primary)]"
-            >
-              {item.label}
-            </Link>
-          ))}
+        <div className="hidden items-center gap-9 text-[15px] md:flex">
+          {NAV_LINKS.map((item) => {
+            const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
+                className={`transition-colors hover:text-[var(--am-text-primary)] ${
+                  isActive
+                    ? "font-semibold text-[var(--am-text-primary)] underline decoration-[var(--am-accent)] underline-offset-8"
+                    : "text-[var(--am-text-secondary)]"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
         </div>
 
         <button
@@ -64,7 +65,7 @@ export default function BlogNav({ navLinks }: BlogNavProps) {
           className="text-[15px] text-[var(--am-text-secondary)] md:hidden"
           aria-label="Open navigation menu"
           aria-expanded={isMobileMenuOpen}
-          aria-controls="blog-mobile-menu"
+          aria-controls="site-mobile-menu"
           onClick={() => setIsMobileMenuOpen((previousValue) => !previousValue)}
         >
           Menu
@@ -73,11 +74,11 @@ export default function BlogNav({ navLinks }: BlogNavProps) {
 
       {isMobileMenuOpen && (
         <div
-          id="blog-mobile-menu"
+          id="site-mobile-menu"
           className="absolute left-0 top-16 z-20 w-full border-b border-[var(--am-border)] bg-[var(--am-bg)] px-4 py-3 md:hidden"
         >
           <div className="flex flex-col gap-2">
-            {navLinks.map((item) => (
+            {NAV_LINKS.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}

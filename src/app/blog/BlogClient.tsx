@@ -1,10 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { JetBrains_Mono, Playfair_Display } from "next/font/google";
+import Image from "next/image";
 import Link from "next/link";
 import { Search } from "lucide-react";
+import { jetbrainsMono, playfairDisplay } from "@/lib/fonts";
 import { getUniqueYears, searchAndFilterPosts, type Post } from "@/lib/blog-utils";
+import { formatPostDate, getExcerpt, getReadingTime } from "@/lib/post-meta";
 
 interface BlogClientProps {
   initialPosts: Post[];
@@ -12,45 +14,21 @@ interface BlogClientProps {
 
 const POSTS_PER_PAGE = 6;
 
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["700"],
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400"],
-  display: "swap",
-});
-
-function getReadingTime(content: string) {
-  const plainText = content.replace(/[#*_`>\-\n]/g, " ").replace(/\s+/g, " ").trim();
-  const estimatedMinutes = Math.max(1, Math.round(plainText.length / 900));
-  return `${estimatedMinutes} min read`;
-}
-
-function getExcerpt(content: string) {
-  const plainText = content.replace(/[#*_`>\-\n]/g, " ").replace(/\s+/g, " ").trim();
-  if (plainText.length <= 130) {
-    return plainText;
-  }
-
-  return `${plainText.slice(0, 130).trim()}...`;
-}
-
-function formatPostDate(dateValue: string) {
-  const parsedDate = new Date(dateValue);
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return dateValue;
-  }
-
-  return parsedDate.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+function PostMeta({ post }: { post: Post }) {
+  return (
+    <div className="flex flex-wrap items-center gap-3 text-[12px] text-[var(--am-text-muted)]">
+      <span>{formatPostDate(post.date)}</span>
+      <span aria-hidden="true">·</span>
+      <span>{getReadingTime(post.content)}</span>
+      {post.tags?.[0] ? (
+        <span
+          className={`${jetbrainsMono.className} rounded-full bg-[var(--am-accent-soft)] px-[10px] py-[3px] text-[11px] text-[var(--am-accent)]`}
+        >
+          {post.tags[0]}
+        </span>
+      ) : null}
+    </div>
+  );
 }
 
 export default function BlogClient({ initialPosts }: BlogClientProps) {
@@ -68,6 +46,10 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
     const startIndex = (activePage - 1) * POSTS_PER_PAGE;
     return filteredPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
   }, [filteredPosts, activePage]);
+
+  const isDefaultView = !searchQuery.trim() && selectedYear === "all" && activePage === 1;
+  const featuredPost = isDefaultView ? paginatedPosts[0] : undefined;
+  const listPosts = featuredPost ? paginatedPosts.slice(1) : paginatedPosts;
 
   return (
     <div className="mt-7 w-full">
@@ -133,38 +115,64 @@ export default function BlogClient({ initialPosts }: BlogClientProps) {
 
       {filteredPosts.length > 0 ? (
         <div>
-          {paginatedPosts.map((post, index) => (
-            <article
-              key={post.slug}
-              className="border-b border-[var(--am-border)] py-7 last:border-b"
-            >
-              <Link href={`/blog/${post.slug}`} className="group block space-y-2">
-                <div className="flex flex-wrap items-center gap-3 text-[12px]">
-                  <span className={`${jetbrainsMono.className} text-[11px] text-[var(--am-text-muted)]`}>
-                    {((activePage - 1) * POSTS_PER_PAGE + index + 1)
-                      .toString()
-                      .padStart(2, "0")}
-                  </span>
-                  <span
-                    className={`${jetbrainsMono.className} rounded-full bg-[var(--am-accent-soft)] px-[10px] py-[3px] text-[11px] text-[var(--am-accent)]`}
-                  >
-                    {formatPostDate(post.date).slice(-4)}
-                  </span>
-                  <span className="text-[12px] text-[var(--am-text-muted)]">
-                    {formatPostDate(post.date)}
-                  </span>
-                </div>
-                <h2
-                  className={`${playfairDisplay.className} text-[26px] font-bold leading-tight text-[var(--am-text-primary)] transition-colors group-hover:text-[var(--am-accent)] md:text-[30px]`}
+          {featuredPost ? (
+            <article className="border-b border-[var(--am-border)] py-8">
+              <Link href={`/blog/${featuredPost.slug}`} className="group block space-y-3">
+                <p
+                  className={`${jetbrainsMono.className} text-[11px] uppercase tracking-[0.14em] text-[var(--am-accent)]`}
                 >
-                  {post.title}
+                  Latest
+                </p>
+                {featuredPost.image ? (
+                  <div className="overflow-hidden">
+                    <Image
+                      src={featuredPost.image}
+                      alt=""
+                      width={1200}
+                      height={630}
+                      className="aspect-[2/1] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                      sizes="(max-width: 768px) 100vw, 720px"
+                    />
+                  </div>
+                ) : null}
+                <h2
+                  className={`${playfairDisplay.className} text-[32px] font-bold leading-tight text-[var(--am-text-primary)] transition-colors group-hover:text-[var(--am-accent)] md:text-[38px]`}
+                >
+                  {featuredPost.title}
                 </h2>
-                <p className="text-[15px] leading-[1.6] text-[var(--am-text-secondary)]">
-                  {getExcerpt(post.content)}
+                <p className="text-[16px] leading-[1.7] text-[var(--am-text-secondary)]">
+                  {featuredPost.excerpt || getExcerpt(featuredPost.content, 220)}
                 </p>
-                <p className="text-[12px] text-[var(--am-text-muted)]">
-                  {getReadingTime(post.content)}
-                </p>
+                <PostMeta post={featuredPost} />
+              </Link>
+            </article>
+          ) : null}
+
+          {listPosts.map((post) => (
+            <article key={post.slug} className="border-b border-[var(--am-border)] py-7">
+              <Link href={`/blog/${post.slug}`} className="group flex items-start justify-between gap-6">
+                <div className="min-w-0 space-y-2">
+                  <PostMeta post={post} />
+                  <h2
+                    className={`${playfairDisplay.className} text-[26px] font-bold leading-tight text-[var(--am-text-primary)] transition-colors group-hover:text-[var(--am-accent)] md:text-[30px]`}
+                  >
+                    {post.title}
+                  </h2>
+                  <p className="text-[15px] leading-[1.6] text-[var(--am-text-secondary)]">
+                    {post.excerpt || getExcerpt(post.content)}
+                  </p>
+                </div>
+                {post.image ? (
+                  <Image
+                    src={post.image}
+                    alt=""
+                    width={192}
+                    height={128}
+                    className="hidden h-24 w-36 shrink-0 object-cover sm:block"
+                    sizes="144px"
+                    loading="lazy"
+                  />
+                ) : null}
               </Link>
             </article>
           ))}

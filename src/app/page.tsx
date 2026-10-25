@@ -1,40 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ExternalLink } from "lucide-react";
+import { ArrowRight, ArrowUpRight, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
-import { JetBrains_Mono, Literata, Playfair_Display } from "next/font/google";
-
-const playfairDisplay = Playfair_Display({
-  subsets: ["latin"],
-  weight: ["700"],
-  display: "swap",
-});
-
-const literata = Literata({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400"],
-  display: "swap",
-});
-
-const NAV_LINKS = [
-  { href: "/blog", label: "Blog" },
-  { href: "/project", label: "Projects" },
-  { href: "/about", label: "About" },
-];
+import SiteNav from "@/app/components/SiteNav";
+import SiteFooter from "@/app/components/SiteFooter";
+import { jetbrainsMono, literata, playfairDisplay } from "@/lib/fonts";
+import { getAllPosts } from "@/lib/posts";
+import { getAllProjects } from "@/lib/projects";
+import { formatPostDate, getExcerpt, getReadingTime } from "@/lib/post-meta";
 
 const TECH_STACK = ["TypeScript", "Go", "React", "PostgreSQL", "Docker"];
-
-const FOOTER_LINKS = [
-  { href: "/feed.xml", label: "RSS" },
-  { href: "https://x.com/SutthiponGEarth", label: "Twitter" },
-  { href: "https://github.com/amiearth", label: "GitHub" },
-];
 
 // Add metadata for each blog post
 export async function generateMetadata(): Promise<Metadata> {
@@ -89,179 +64,229 @@ export async function generateMetadata(): Promise<Metadata> {
 export const revalidate = 3600; // Revalidate every hour
 
 export default function Home() {
+  const posts = getAllPosts();
+  const [featuredPost, ...recentPosts] = posts;
+  const latestPosts = recentPosts.slice(0, 4);
+  const selectedProjects = getAllProjects()
+    .filter((project) => project.category === "project")
+    .slice(0, 3);
+
   return (
     <div
       className={`${literata.className} relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[var(--am-bg)] text-[var(--am-text-primary)]`}
     >
       <div className="flex min-h-screen w-full flex-col">
-        <nav className="h-16 border-b border-[var(--am-border)]">
-          <div className="flex h-full w-full items-center justify-between px-4 md:px-12">
-            <div className="flex items-center gap-2 text-[22px] leading-none text-[var(--am-text-primary)]">
-              <Link href="/" className={`${playfairDisplay.className} italic`}>
-                Earth
-              </Link>
-              <Link
-                href="https://webring.wonderful.software#amiearth.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="วงแหวนเว็บ"
-              >
-                <Image
-                  alt="วงแหวนเว็บ"
-                  width={32}
-                  height={32}
-                  src="https://webring.wonderful.software/webring.black.svg"
-                  sizes="32px"
-                  loading="lazy"
-                />
-              </Link>
-            </div>
+        <SiteNav />
 
-            <div className="hidden items-center gap-9 text-[15px] text-[var(--am-text-secondary)] md:flex">
-              {NAV_LINKS.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="transition-colors hover:text-[var(--am-text-primary)]"
+        <main className="flex-1">
+          {/* Masthead */}
+          <section className="border-b border-[var(--am-border)] px-4 py-14 md:px-12 md:py-20">
+            <div className="mx-auto flex w-full max-w-[960px] flex-col gap-8 md:flex-row md:items-end md:justify-between">
+              <div className="max-w-[640px]">
+                <p
+                  className={`${jetbrainsMono.className} text-[11px] uppercase tracking-[0.16em] text-[var(--am-accent)]`}
                 >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-
-            <button
-              type="button"
-              className="text-[15px] text-[var(--am-text-secondary)] md:hidden"
-              aria-label="Open navigation menu"
-            >
-              Menu
-            </button>
-          </div>
-        </nav>
-
-        <main className="flex min-h-[calc(100vh-128px)] items-center justify-center px-4 py-16 md:py-0">
-          <section className="flex w-full max-w-[680px] flex-col items-center text-center">
-            <div className="flex h-[88px] w-[88px] items-center justify-center rounded-full border-2 border-[var(--am-border)] bg-[var(--am-bg-secondary)]">
-              <Image
-                src="/profile.jpg"
-                alt="Earth profile photo"
-                width={84}
-                height={84}
-                priority
-                className="h-[84px] w-[84px] rounded-full object-cover"
-                sizes="84px"
-              />
-            </div>
-
-            <div className="h-7" />
-
-            <div className="flex items-center gap-2">
-              <h1
-                className={`${playfairDisplay.className} text-5xl font-bold leading-tight text-[var(--am-text-primary)] md:text-[56px]`}
-              >
-                Earth
-              </h1>
-              <Link
-                href="https://webring.wonderful.software#amiearth.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="วงแหวนเว็บ"
-              >
-                <Image
-                  alt="วงแหวนเว็บ"
-                  width={32}
-                  height={32}
-                  src="https://webring.wonderful.software/webring.black.svg"
-                  sizes="32px"
-                  loading="lazy"
-                />
-              </Link>
-            </div>
-
-            <p className="mt-1 text-[15px] text-[var(--am-text-muted)]">
-              Software Developer · Chiang Rai, Thailand
-            </p>
-
-            <p className="mt-5 max-w-[575px] text-[17px] leading-[1.8] text-[var(--am-text-secondary)]">
-              I build thoughtful software and write about the craft of
-              programming. Currently exploring distributed systems and frontend
-              performance.
-            </p>
-
-            <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
-              {TECH_STACK.map((tech) => (
-                <span
-                  key={tech}
-                  className={`${jetbrainsMono.className} rounded-full bg-[var(--am-accent-soft)] px-3 py-[5px] text-xs text-[var(--am-accent)]`}
+                  Software Developer · Chiang Rai, Thailand
+                </p>
+                <h1
+                  className={`${playfairDisplay.className} mt-4 text-5xl font-bold leading-[1.05] md:text-[64px]`}
                 >
-                  {tech}
-                </span>
-              ))}
-            </div>
+                  Earth
+                </h1>
+                <p className="mt-5 max-w-[540px] text-[17px] leading-[1.8] text-[var(--am-text-secondary)]">
+                  I build thoughtful software and write about the craft of
+                  programming. Currently exploring distributed systems and
+                  frontend performance.
+                </p>
+                <div className="mt-7 flex flex-wrap items-center gap-3">
+                  <Link
+                    href="/blog"
+                    className="inline-flex items-center gap-2 bg-[var(--am-accent)] px-6 py-[11px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  >
+                    Read Blog
+                    <ArrowRight size={14} aria-hidden="true" />
+                  </Link>
+                  <Link
+                    href="https://github.com/amiearth"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 border border-[var(--am-border)] px-6 py-[10px] text-sm transition-colors hover:bg-[var(--am-bg-secondary)]"
+                  >
+                    GitHub
+                    <ExternalLink size={14} aria-hidden="true" />
+                  </Link>
+                </div>
+              </div>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link
-                href="/blog"
-                className="bg-[var(--am-accent)] px-6 py-[11px] text-sm font-semibold text-white transition-opacity hover:opacity-90"
-              >
-                Read Blog
-              </Link>
-              <Link
-                href="https://github.com/amiearth"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 border border-[var(--am-border)] px-6 py-[10px] text-sm text-[var(--am-text-primary)] transition-colors hover:bg-[var(--am-bg-secondary)]"
-              >
-                GitHub
-                <ExternalLink size={14} aria-hidden="true" />
-              </Link>
+              <div className="flex items-center gap-4 md:flex-col md:items-end">
+                <Image
+                  src="/profile.jpg"
+                  alt="Earth profile photo"
+                  width={84}
+                  height={84}
+                  priority
+                  className="h-[72px] w-[72px] rounded-full border-2 border-[var(--am-border)] object-cover md:h-[84px] md:w-[84px]"
+                  sizes="84px"
+                />
+                <div className="flex flex-wrap gap-2 md:justify-end">
+                  {TECH_STACK.map((tech) => (
+                    <span
+                      key={tech}
+                      className={`${jetbrainsMono.className} rounded-full bg-[var(--am-accent-soft)] px-3 py-[5px] text-xs text-[var(--am-accent)]`}
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
           </section>
+
+          {/* Latest writing */}
+          {featuredPost ? (
+            <section className="px-4 py-14 md:px-12" aria-labelledby="latest-writing">
+              <div className="mx-auto w-full max-w-[960px]">
+                <div className="flex items-end justify-between gap-4">
+                  <h2
+                    id="latest-writing"
+                    className={`${playfairDisplay.className} text-[28px] font-bold md:text-[32px]`}
+                  >
+                    Latest writing
+                  </h2>
+                  <Link
+                    href="/blog"
+                    className="inline-flex shrink-0 items-center gap-1.5 text-[14px] text-[var(--am-accent)] transition-colors hover:text-[var(--am-text-primary)]"
+                  >
+                    All posts
+                    <ArrowRight size={14} aria-hidden="true" />
+                  </Link>
+                </div>
+
+                <article className="mt-8 border-b border-[var(--am-border)] pb-10">
+                  <Link href={`/blog/${featuredPost.slug}`} className="group block space-y-3">
+                    <p
+                      className={`${jetbrainsMono.className} text-[11px] uppercase tracking-[0.14em] text-[var(--am-accent)]`}
+                    >
+                      Latest · {formatPostDate(featuredPost.date)} · {getReadingTime(featuredPost.content)}
+                    </p>
+                    {featuredPost.image ? (
+                      <div className="overflow-hidden">
+                        <Image
+                          src={featuredPost.image}
+                          alt=""
+                          width={1200}
+                          height={630}
+                          className="aspect-[2/1] w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                          sizes="(max-width: 768px) 100vw, 960px"
+                        />
+                      </div>
+                    ) : null}
+                    <h3
+                      className={`${playfairDisplay.className} max-w-[760px] text-[32px] font-bold leading-tight transition-colors group-hover:text-[var(--am-accent)] md:text-[40px]`}
+                    >
+                      {featuredPost.title}
+                    </h3>
+                    <p className="max-w-[720px] text-[16px] leading-[1.7] text-[var(--am-text-secondary)]">
+                      {featuredPost.excerpt || getExcerpt(featuredPost.content, 220)}
+                    </p>
+                  </Link>
+                </article>
+
+                <div>
+                  {latestPosts.map((post) => (
+                    <article key={post.slug} className="border-b border-[var(--am-border)] last:border-b-0">
+                      <Link
+                        href={`/blog/${post.slug}`}
+                        className="group flex items-baseline justify-between gap-6 py-5"
+                      >
+                        <div className="min-w-0 space-y-1">
+                          <h3
+                            className={`${playfairDisplay.className} text-[20px] font-semibold leading-snug transition-colors group-hover:text-[var(--am-accent)] md:text-[22px]`}
+                          >
+                            {post.title}
+                          </h3>
+                          <p className="line-clamp-2 text-[14px] leading-[1.6] text-[var(--am-text-secondary)]">
+                            {post.excerpt || getExcerpt(post.content)}
+                          </p>
+                        </div>
+                        <p
+                          className={`${jetbrainsMono.className} hidden shrink-0 text-[11px] text-[var(--am-text-muted)] sm:block`}
+                        >
+                          {formatPostDate(post.date)}
+                        </p>
+                      </Link>
+                    </article>
+                  ))}
+                </div>
+              </div>
+            </section>
+          ) : null}
+
+          {/* Selected projects */}
+          {selectedProjects.length > 0 ? (
+            <section
+              className="border-t border-[var(--am-border)] bg-[var(--am-bg-secondary)]/40 px-4 py-14 md:px-12"
+              aria-labelledby="selected-projects"
+            >
+              <div className="mx-auto w-full max-w-[960px]">
+                <div className="flex items-end justify-between gap-4">
+                  <h2
+                    id="selected-projects"
+                    className={`${playfairDisplay.className} text-[28px] font-bold md:text-[32px]`}
+                  >
+                    Selected projects
+                  </h2>
+                  <Link
+                    href="/project"
+                    className="inline-flex shrink-0 items-center gap-1.5 text-[14px] text-[var(--am-accent)] transition-colors hover:text-[var(--am-text-primary)]"
+                  >
+                    All projects
+                    <ArrowRight size={14} aria-hidden="true" />
+                  </Link>
+                </div>
+
+                <div className="mt-8 grid gap-px border border-[var(--am-border)] bg-[var(--am-border)] md:grid-cols-3">
+                  {selectedProjects.map((project) => (
+                    <Link
+                      key={project.slug}
+                      href={project.link}
+                      target={project.link.startsWith("http") ? "_blank" : undefined}
+                      rel={project.link.startsWith("http") ? "noopener noreferrer" : undefined}
+                      className="group flex min-h-[180px] flex-col justify-between gap-6 bg-[var(--am-bg)] p-6 transition-colors hover:bg-[var(--am-bg-secondary)]"
+                    >
+                      <div className="space-y-2">
+                        <h3
+                          className={`${playfairDisplay.className} text-[21px] font-semibold leading-snug group-hover:text-[var(--am-accent)]`}
+                        >
+                          {project.title}
+                        </h3>
+                        <p className="text-[14px] leading-[1.6] text-[var(--am-text-secondary)]">
+                          {project.description}
+                        </p>
+                      </div>
+                      <span className="inline-flex items-center gap-1.5 text-[13px] text-[var(--am-accent)]">
+                        Visit
+                        <ArrowUpRight size={13} aria-hidden="true" />
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+
+                <p className="mt-10 max-w-[640px] text-[15px] leading-[1.7] text-[var(--am-text-secondary)]">
+                  More about me, my experience, and how to get in touch.{" "}
+                  <Link
+                    href="/about"
+                    className="text-[var(--am-accent)] underline-offset-4 hover:underline"
+                  >
+                    About Earth →
+                  </Link>
+                </p>
+              </div>
+            </section>
+          ) : null}
         </main>
 
-        <footer className="border-t border-[var(--am-border)]">
-          <div className="hidden h-16 w-full items-center justify-between px-12 md:flex">
-            <p className="text-[13px] text-[var(--am-text-muted)]">
-              © 2026 Earth. Made with care in Chiang Rai.
-            </p>
-            <div className="flex items-center gap-6 text-[13px] text-[var(--am-text-muted)]">
-              {FOOTER_LINKS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    item.href.startsWith("http") ? "noopener noreferrer" : undefined
-                  }
-                  className="transition-colors hover:text-[var(--am-text-secondary)]"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="flex w-full flex-col items-center gap-3 px-6 py-4 text-center md:hidden">
-            <p className="text-[13px] text-[var(--am-text-muted)]">
-              © 2026 Earth. Made with care in Chiang Rai.
-            </p>
-            <div className="flex items-center gap-5 text-[13px] text-[var(--am-text-muted)]">
-              {FOOTER_LINKS.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  target={item.href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    item.href.startsWith("http") ? "noopener noreferrer" : undefined
-                  }
-                  className="transition-colors hover:text-[var(--am-text-secondary)]"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </footer>
+        <SiteFooter />
       </div>
     </div>
   );

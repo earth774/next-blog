@@ -2,7 +2,7 @@ import { getAllPosts, getPostBySlug } from "@/lib/posts";
 import Link from "next/link";
 import Markdown from "markdown-to-jsx";
 import { JetBrains_Mono, Literata, Playfair_Display } from "next/font/google";
-import BlogNav from "../BlogNav";
+import SiteNav from "@/app/components/SiteNav";
 import styles from "./page.module.css";
 
 interface Post {
@@ -13,12 +13,6 @@ interface Post {
   image?: string;
   excerpt?: string;
 }
-
-const NAV_LINKS = [
-  { href: "/blog", label: "Blog" },
-  { href: "/project", label: "Projects" },
-  { href: "/about", label: "About" },
-];
 
 const FOOTER_LINKS = [
   { href: "/feed.xml", label: "RSS" },
@@ -167,7 +161,7 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
         className={`${literata.className} relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[var(--am-bg)] text-[var(--am-text-primary)]`}
       >
         <div className="flex min-h-screen w-full flex-col">
-          <BlogNav navLinks={NAV_LINKS} />
+          <SiteNav />
           <main className="mx-auto flex w-full max-w-[720px] flex-1 items-center justify-center px-4 py-20 md:px-12">
             <div className="text-center">
               <h1
@@ -197,7 +191,7 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
       className={`${literata.className} relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[var(--am-bg)] text-[var(--am-text-primary)]`}
     >
       <div className="flex min-h-screen w-full flex-col">
-        <BlogNav navLinks={NAV_LINKS} />
+        <SiteNav />
 
         <main className="flex-1 px-4 py-14 md:px-12">
           <article className="mx-auto w-full max-w-[720px]">
