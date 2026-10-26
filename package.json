@@ -9,7 +9,6 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@next/third-parties": "^16.0.7",
     "@vercel/speed-insights": "^1.1.0",
     "gray-matter": "^4.0.3",
     "lucide-react": "^0.469.0",
@@ -17,8 +16,7 @@
     "next": "16.0.10",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "rss": "^1.2.2",
-    "web-vitals": "^5.1.0"
+    "rss": "^1.2.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

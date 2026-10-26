@@ -11,7 +11,7 @@
 - The home route uses a bespoke layout in `src/app/page.tsx` aligned to `design/amiearth.pen` tokens (`--am-*` variables in `src/app/globals.css`) and intentionally avoids the shared `Header`/`Footer` components used on other routes.
 - The Wonderful Webring badge (`webring.wonderful.software` SVG) appears next to Earth branding on the home page.
 - Blog workflow Cursor subagents live under `.cursor/agents/`: `article-researcher.md`, `article-writer.md`, and `article-reviewer.md`.
-- Third-party scripts in the App Router root layout use `next/script` with `afterInteractive` where raw `<script>` tags risk hydration mismatches.
+- Third-party scripts in the App Router root layout use `next/script` (raw `<script>` tags risk hydration mismatches); AdSense and GA use `lazyOnload` so they do not compete with fonts/CSS before first paint on mobile.
 - Blog route navigation is centralized in `src/app/blog/BlogNav.tsx`, including a mobile `Menu` toggle that reveals `Blog`, `Projects`, and `About` links.
 - Blog posts are Markdown files at `src/content/posts/<slug>/<slug>.md` and are loaded via `getAllPosts` in `src/lib/posts.ts`.
 - Repo-root `BLOG_TECH_TASK_LIST.md` holds the tech blog editorial backlog and per-article task checklists.

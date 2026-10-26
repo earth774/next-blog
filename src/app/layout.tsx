@@ -1,28 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { GoogleAnalytics } from "@next/third-parties/google";
-import ClientWrapper from "@/app/components/ClientWrapper";
 
 const googleSiteVerification =
   process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim() ||
   "53COaAOaFrWxMtJmbjq81KKI97_4CV0mWe0fY98xWlU";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-  preload: true,
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-  preload: true,
-});
 
 export const metadata: Metadata = {
   title: {
@@ -108,27 +91,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Preload critical resources */}
-        <link
-          rel="preload"
-          href="/profile.jpg"
-          as="image"
-          type="image/jpeg"
-          fetchPriority="high"
-        />
-        <link
-          rel="preconnect"
-          href="https://pagead2.googlesyndication.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          rel="preconnect"
-          href="https://webring.wonderful.software"
-          crossOrigin="anonymous"
-        />
-        {/* DNS prefetch for external domains */}
+        {/* Third parties load after onload; resolve DNS early without competing for bandwidth */}
         <link rel="dns-prefetch" href="https://pagead2.googlesyndication.com" />
-        <link rel="dns-prefetch" href="https://webring.wonderful.software" />
+        <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
 
         {/* PWA Manifest */}
         <link rel="manifest" href="/manifest.json" />
@@ -167,18 +132,28 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${geistSans.variable} ${geistMono.variable} mt-8 min-h-screen bg-white text-black antialiased`}
+        className="mt-8 min-h-screen bg-white text-black antialiased"
       >
         {children}
         <SpeedInsights />
-        <ClientWrapper />
 
+        {/* lazyOnload: afterInteractive preloads these at High priority and they starve fonts/CSS on mobile */}
         <Script
           id="adsense-script"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6751234358755697"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
           crossOrigin="anonymous"
         />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-JRKV3SB66K"
+          strategy="lazyOnload"
+        />
+        <Script id="ga-init" strategy="lazyOnload">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-JRKV3SB66K');`}
+        </Script>
 
         {/* Service Worker Registration */}
         <script
@@ -199,7 +174,6 @@ export default function RootLayout({
           }}
         />
       </body>
-      <GoogleAnalytics gaId="G-JRKV3SB66K" />
     </html>
   );
 }

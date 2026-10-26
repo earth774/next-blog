@@ -83,6 +83,19 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // HTML pages with shorter caching. Must stay before the specific rules below:
+      // the last matching rule wins, so this used to clobber static asset caching.
+      // /_next/ is excluded so Next's own headers (chunks, /_next/image TTL) apply.
+      {
+        source: "/((?!_next/).*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value:
+              "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+          },
+        ],
+      },
       // Static assets with long-term caching
       {
         source:
@@ -91,17 +104,6 @@ const nextConfig: NextConfig = {
           {
             key: "Cache-Control",
             value: "public, max-age=31536000, immutable",
-          },
-        ],
-      },
-      // HTML pages with shorter caching for dynamic content
-      {
-        source: "/(.*)",
-        headers: [
-          {
-            key: "Cache-Control",
-            value:
-              "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
           },
         ],
       },
@@ -141,13 +143,13 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Manifest and service worker with long-term caching
+      // Service worker must revalidate or clients/CDN can pin a stale worker
       {
-        source: "/(manifest\\.json|sw\\.js)",
+        source: "/sw.js",
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=31536000, immutable",
+            value: "public, max-age=0, must-revalidate",
           },
         ],
       },
