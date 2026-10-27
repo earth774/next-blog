@@ -67,7 +67,7 @@ next-blog/
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/next-blog.git
+git clone https://github.com/earth774/next-blog.git
 cd next-blog
 ```
 
@@ -215,7 +215,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - **Website**: [https://amiearth.com](https://amiearth.com)
 - **Email**: contact@amiearth.com
-- **GitHub**: [@amiearth](https://github.com/amiearth)
+- **GitHub**: [@earth774](https://github.com/earth774)
 
 ---
 

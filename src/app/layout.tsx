@@ -123,7 +123,7 @@ export default function RootLayout({
                 addressCountry: "TH",
               },
               url: "https://amiearth.com",
-              sameAs: ["https://github.com/amiearth"],
+              sameAs: ["https://github.com/earth774"],
               image: "https://amiearth.com/profile.jpg",
               description: "Software Developer from Chiang Rai, Thailand",
             }),

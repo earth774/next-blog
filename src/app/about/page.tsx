@@ -48,7 +48,7 @@ const SKILL_GROUPS = [
 ];
 
 const CONTACT_LINKS = [
-  { href: "https://github.com/amiearth", label: "GitHub" },
+  { href: "https://github.com/earth774", label: "GitHub" },
   { href: "https://x.com/SutthiponGEarth", label: "Twitter" },
 ];
 
@@ -300,7 +300,7 @@ export default async function About() {
               addressCountry: "TH",
             },
             url: "https://amiearth.com",
-            sameAs: ["https://github.com/amiearth"],
+            sameAs: ["https://github.com/earth774"],
             image: "https://amiearth.com/profile.jpg",
             description:
               "Software Developer from Chiang Rai, Thailand with expertise in modern web technologies",
