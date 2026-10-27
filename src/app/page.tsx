@@ -194,7 +194,7 @@ export default function Home() {
                     <ArrowRight size={14} aria-hidden="true" />
                   </Link>
                   <Link
-                    href="https://github.com/amiearth"
+                    href="https://github.com/earth774"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 border border-[var(--am-border)] px-6 py-[10px] text-sm transition-colors hover:bg-[var(--am-bg-secondary)]"

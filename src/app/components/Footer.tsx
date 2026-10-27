@@ -6,7 +6,7 @@ const Footer = () => {
       {/* Social Links */}
       <div className="flex gap-4 justify-center">
         <a
-          href="https://github.com/amiearth"
+          href="https://github.com/earth774"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"

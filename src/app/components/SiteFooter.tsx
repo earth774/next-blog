@@ -3,7 +3,7 @@ import Link from "next/link";
 export const FOOTER_LINKS = [
   { href: "/feed.xml", label: "RSS" },
   { href: "https://x.com/SutthiponGEarth", label: "Twitter" },
-  { href: "https://github.com/amiearth", label: "GitHub" },
+  { href: "https://github.com/earth774", label: "GitHub" },
 ];
 
 export default function SiteFooter() {
