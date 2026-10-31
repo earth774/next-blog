@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "ANALYZE=true next dev --turbopack",
-    "build": "ANALYZE=true next build",
+    "build": "ANALYZE=true next build --webpack",
     "start": "next start",
     "lint": "eslint ."
   },
