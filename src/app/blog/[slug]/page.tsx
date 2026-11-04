@@ -1,4 +1,5 @@
 import { EXCERPT_LENGTH, getAllPosts, getPostBySlug } from "@/lib/posts";
+import { buildArticleSpeechText } from "@/lib/article-speech";
 import { getExcerpt } from "@/lib/post-meta";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,6 +8,7 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import SiteNav from "@/app/components/SiteNav";
 import SiteFooter from "@/app/components/SiteFooter";
 import PostMeta from "@/app/components/PostMeta";
+import ArticleListen from "@/app/components/ArticleListen";
 import { jetbrainsMono, literata, playfairDisplay } from "@/lib/fonts";
 import type { Post } from "@/lib/blog-utils";
 import styles from "./page.module.css";
@@ -146,6 +148,8 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
     );
   }
 
+  const speechText = buildArticleSpeechText(post.title, post.content);
+
   return (
     <div
       className={`${literata.className} relative left-1/2 -mt-8 w-screen -translate-x-1/2 bg-[var(--am-bg)] text-[var(--am-text-primary)]`}
@@ -199,6 +203,7 @@ const BlogPage = async ({ params }: { params: Promise<{ slug: string }> }) => {
                   </span>
                 </span>
               </Link>
+              <ArticleListen text={speechText} />
             </header>
 
             {/* Skip derived images that the body already shows inline */}
